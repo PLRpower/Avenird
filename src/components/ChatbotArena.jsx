@@ -9,7 +9,7 @@ import './ChatbotArena.scss';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const API_KEY = "AIzaSyCoDixLwEyyUCb-a6eRLtLop-eanS5Dwsg";
+const API_KEY = "AIzaSyBgp3IkZqDa7pW1iRxfpMNG9gXaAYjXFYw";
 
 const ChatbotArena = () => {
     const [activeBot, setActiveBot] = useState('chatbruti');
@@ -105,6 +105,7 @@ const ChatbotArena = () => {
                 {activeBot === 'chatbruti' ? (
                     <ChatBot
                         key="chatbruti"
+                        botName="Chat'bruti"
                         botType="chatbruti"
                         avatar={chatbrutiImg}
                         initialMessage="Salut ! Je suis Chat'bruti. Pose-moi une question, je te promets de ne pas y répondre correctement ! 🙃"
@@ -113,7 +114,9 @@ const ChatbotArena = () => {
                 ) : (
                     <ChatBot
                         key="truthbot"
+                        botName="TruthBot"
                         botType="truthbot"
+                        avatar={truthbotImg}
                         initialMessage="Bonjour, je suis TruthBot 🛡️, votre allié contre la désinformation dans le cadre du projet AI4GOOD. Envoyez-moi un lien (site web, tweet), un texte ou une affirmation à vérifier, et je vous fournirai une analyse détaillée avec sources pour distinguer le vrai du faux."
                         systemPrompt={`Tu es TruthBot, un assistant IA expert en fact-checking développé pour le projet AI4GOOD.
 
@@ -139,7 +142,7 @@ Dans le champ "analysis", structure ton texte ainsi:
 - Liste les affirmations fausses ou trompeuses
 - Identifie les techniques de manipulation
 
-## � Recommandations
+## 💡 Recommandations
 - Conseils pour développer l'esprit critique
 
 Sois pédagogique et précis.`}
@@ -152,7 +155,7 @@ Sois pédagogique et précis.`}
         </div>
     );
 };
-const ChatBot = ({ botType, initialMessage, systemPrompt, setCredibilityScore, setSources, setVerdict }) => {
+const ChatBot = ({ botName, avatar, botType, initialMessage, systemPrompt, setCredibilityScore, setSources, setVerdict }) => {
     const [messages, setMessages] = useState(() => {
         const saved = localStorage.getItem(`avenird_chat_${botType}`);
         return saved ? JSON.parse(saved) : [{ role: 'model', parts: [{ text: initialMessage }] }];
@@ -248,11 +251,7 @@ const ChatBot = ({ botType, initialMessage, systemPrompt, setCredibilityScore, s
             <div className="chat-messages" ref={messagesContainerRef}>
                 {messages.map((msg, idx) => (
                     <div key={idx} className={`message ${msg.role === 'model' ? 'bot' : 'user'}`}>
-                        {msg.role === 'model' && avatar && (
-                            <div className="avatar">
-                                <img src={avatar} alt={botName} />
-                            </div>
-                        )}
+
                         <div className="bubble">
                             <ReactMarkdown>{msg.parts[0].text}</ReactMarkdown>
                         </div>
