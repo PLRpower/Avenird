@@ -85,18 +85,23 @@ const ChatBot = ({ botName, botType, initialMessage, systemPrompt }) => {
 
     const [input, setInput] = useState('');
     const [loading, setLoading] = useState(false);
-    const chatEndRef = useRef(null);
-
-    // Save to localStorage whenever messages change
-    useEffect(() => {
-        localStorage.setItem(`avenird_chat_${botType}`, JSON.stringify(messages));
-    }, [messages, botType]);
+    const messagesContainerRef = useRef(null);
 
     const scrollToBottom = () => {
-        chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+        if (messagesContainerRef.current) {
+            const { scrollHeight, clientHeight } = messagesContainerRef.current;
+            messagesContainerRef.current.scrollTo({
+                top: scrollHeight - clientHeight,
+                behavior: "smooth"
+            });
+        }
     };
 
-    useEffect(scrollToBottom, [messages]);
+    // Scroll only when messages change, but use a ref to track if it's the initial load to avoid jump? 
+    // Actually scrollTop won't scroll the window, so it's safe.
+    useEffect(() => {
+        scrollToBottom();
+    }, [messages]);
 
     const handleSend = async () => {
         if (!input.trim()) return;
@@ -150,7 +155,7 @@ const ChatBot = ({ botName, botType, initialMessage, systemPrompt }) => {
 
     return (
         <div className={`chat-interface ${botType}`}>
-            <div className="chat-messages">
+            <div className="chat-messages" ref={messagesContainerRef}>
                 {messages.map((msg, idx) => (
                     <div key={idx} className={`message ${msg.role === 'model' ? 'bot' : 'user'}`}>
                         <div className="bubble">
@@ -159,7 +164,6 @@ const ChatBot = ({ botName, botType, initialMessage, systemPrompt }) => {
                     </div>
                 ))}
                 {loading && <div className="message bot"><div className="bubble">...</div></div>}
-                <div ref={chatEndRef} />
             </div>
             <div className="chat-input">
                 <textarea

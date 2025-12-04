@@ -98,6 +98,8 @@
                 margin-bottom: 1.5rem;
                 opacity: 1;
                 transform: none;
+                max-width: 80%;
+                /* Prevent overlap with sidebar */
             }
         }
     }
