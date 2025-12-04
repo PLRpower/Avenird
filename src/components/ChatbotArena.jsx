@@ -1,13 +1,34 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import './ChatbotArena.scss';
+
+gsap.registerPlugin(ScrollTrigger);
 
 const ChatbotArena = () => {
     const [activeBot, setActiveBot] = useState('chatbruti'); // 'chatbruti' or 'truthbot'
     const [apiKey, setApiKey] = useState('');
+    const arenaRef = useRef(null);
+
+    useEffect(() => {
+        gsap.fromTo(arenaRef.current,
+            { y: 50, opacity: 0 },
+            {
+                y: 0,
+                opacity: 1,
+                duration: 1,
+                ease: "power3.out",
+                scrollTrigger: {
+                    trigger: arenaRef.current,
+                    start: "top 80%",
+                }
+            }
+        );
+    }, []);
 
     return (
-        <div className="chatbot-arena-container">
+        <div className="chatbot-arena-container" ref={arenaRef}>
             <div className="arena-header">
                 <h2>L'Arène des Bots</h2>
                 <p>Choisissez votre combattant : le Chat'bruti inutile ou le TruthBot éthique.</p>
