@@ -29,7 +29,7 @@ Projet développé pour le défi "Le Village Numérique Résistant".
   - Noir Secondaire : #2d2727
   - Texte : #f5eee4
 - **Polices** :
-  - Titres : Unbounded (Alternative à Cy Grotesk Wide)
+  - Titres : Cy Grotesk Wide
   - Textes : Poppins
 
 ## Structure
