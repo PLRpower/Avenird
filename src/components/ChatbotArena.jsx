@@ -7,16 +7,18 @@ import './ChatbotArena.scss';
 
 gsap.registerPlugin(ScrollTrigger);
 
-// ⚠️ In a real production app, never expose API keys on the client side!
-// Since this is for a hackathon/demo, we'll use it here.
 const API_KEY = "AIzaSyCoDixLwEyyUCb-a6eRLtLop-eanS5Dwsg";
 
 const ChatbotArena = () => {
-    const [activeBot, setActiveBot] = useState('chatbruti'); // 'chatbruti' or 'truthbot'
+    const [activeBot, setActiveBot] = useState('chatbruti');
     const arenaRef = useRef(null);
 
+    // TruthBot states managed at parent level
+    const [credibilityScore, setCredibilityScore] = useState(null);
+    const [sources, setSources] = useState([]);
+    const [verdict, setVerdict] = useState(null);
+
     useEffect(() => {
-        // Simple fade-in
         gsap.fromTo(arenaRef.current,
             { autoAlpha: 0, y: 30 },
             {
@@ -54,11 +56,53 @@ const ChatbotArena = () => {
                 </div>
             </div>
 
+            {/* TruthBot Panels - OUTSIDE the chat box */}
+            {activeBot === 'truthbot' && (credibilityScore !== null || sources.length > 0) && (
+                <div className="truthbot-panels-external">
+                    {credibilityScore !== null && (
+                        <div className="credibility-panel">
+                            <h3>📊 Score de Crédibilité</h3>
+                            <div className="score-display">
+                                <div className="score-number">{credibilityScore}/10</div>
+                                <div className="score-bar">
+                                    <div
+                                        className="score-fill"
+                                        style={{
+                                            width: `${(credibilityScore / 10) * 100}%`,
+                                            backgroundColor: credibilityScore >= 7 ? '#4ade80' : credibilityScore >= 4 ? '#fbbf24' : '#f87171'
+                                        }}
+                                    />
+                                </div>
+                                {verdict && <div className="verdict">{verdict}</div>}
+                            </div>
+                        </div>
+                    )}
+
+                    {sources.length > 0 && (
+                        <div className="sources-panel">
+                            <h3>🔍 Sources de Vérification</h3>
+                            <ul className="sources-list">
+                                {sources.map((source, idx) => (
+                                    <li key={idx}>
+                                        {source.url && source.url.startsWith('http') ? (
+                                            <a href={source.url} target="_blank" rel="noopener noreferrer">
+                                                {source.name}
+                                            </a>
+                                        ) : (
+                                            <span>{source.name} {source.url ? `- ${source.url}` : ''}</span>
+                                        )}
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
+                </div>
+            )}
+
             <div className="arena-content">
                 {activeBot === 'chatbruti' ? (
                     <ChatBot
                         key="chatbruti"
-                        botName="Chat'bruti"
                         botType="chatbruti"
                         initialMessage="Salut ! Je suis Chat'bruti. Pose-moi une question, je te promets de ne pas y répondre correctement ! 🙃"
                         systemPrompt="Tu es Chat'bruti, un chatbot inutile, incompétent et un peu arrogant. Tu ne réponds JAMAIS directement aux questions. Tu fais des blagues nulles, tu changes de sujet, tu fais des remarques philosophiques absurdes, tu parles de ton chat imaginaire, ou tu prétends ne pas comprendre. Ton but est d'être drôle mais frustrant pour l'utilisateur. Ne donne jamais d'information utile. SOIS CONCIS, fais des réponses courtes et percutantes (max 2-3 phrases)."
@@ -66,36 +110,39 @@ const ChatbotArena = () => {
                 ) : (
                     <ChatBot
                         key="truthbot"
-                        botName="TruthBot"
                         botType="truthbot"
                         initialMessage="Bonjour, je suis TruthBot 🛡️, votre allié contre la désinformation dans le cadre du projet AI4GOOD. Envoyez-moi un lien (site web, tweet), un texte ou une affirmation à vérifier, et je vous fournirai une analyse détaillée avec sources pour distinguer le vrai du faux."
-                        systemPrompt="Tu es TruthBot, un assistant IA expert en fact-checking développé pour le projet AI4GOOD. Ta mission est de lutter contre la désinformation en analysant rigoureusement tout contenu soumis (URL, tweet, article, affirmation). 
+                        systemPrompt={`Tu es TruthBot, un assistant IA expert en fact-checking développé pour le projet AI4GOOD.
 
-Pour chaque analyse, tu DOIS structurer ta réponse ainsi:
+IMPORTANT: Tu DOIS OBLIGATOIREMENT retourner ta réponse au format JSON dans un bloc code markdown comme suit:
 
-📊 **ANALYSE DE FIABILITÉ**
-- Évalue si le contenu semble vrai, partiellement vrai, trompeur, ou faux
-- Attribue un score de crédibilité (0-10)
+\`\`\`json
+{
+  "score": <nombre de 0 à 10>,
+  "verdict": "<vrai|partiellement vrai|trompeur|faux>",
+  "analysis": "<ton analyse en markdown>",
+  "sources": [
+    {"name": "<nom de la source>", "url": "<URL ou description>"}
+  ]
+}
+\`\`\`
 
-✅ **ÉLÉMENTS VRAIS**
+Dans le champ "analysis", structure ton texte ainsi:
+
+## ✅ Éléments Vrais
 - Liste les affirmations vérifiables et exactes
-- Pour chaque point vrai, indique pourquoi c'est vrai
 
-❌ **ÉLÉMENTS FAUX OU TROMPEURS**
-- Liste les affirmations fausses, trompeuses ou non vérifiables
-- Explique pourquoi elles sont problématiques
-- Identifie les techniques de manipulation (biais, sophismes, cherry-picking, etc.)
+## ❌ Éléments Faux ou Trompeurs
+- Liste les affirmations fausses ou trompeuses
+- Identifie les techniques de manipulation
 
-🔍 **SOURCES ET VÉRIFICATION**
-- Suggère des sources fiables pour vérifier (sites de fact-checking comme AFP Factuel, Le Monde Décodeurs, Snopes, FactCheck.org)
-- Si l'utilisateur a fourni une URL, analyse le contexte du site (domaine connu, date, auteur)
-- Propose des mots-clés pour rechercher plus d'informations
-
-💡 **RECOMMANDATIONS**
+## � Recommandations
 - Conseils pour développer l'esprit critique
-- Signaux d'alerte à surveiller (titres sensationnalistes, absence de sources, etc.)
 
-Sois pédagogique, bienveillant et précis. Ton but est d'éduquer, pas de culpabiliser. Si l'information manque de contexte pour une analyse complète, explique-le clairement."
+Sois pédagogique et précis.`}
+                        setCredibilityScore={setCredibilityScore}
+                        setSources={setSources}
+                        setVerdict={setVerdict}
                     />
                 )}
             </div>
@@ -103,8 +150,7 @@ Sois pédagogique, bienveillant et précis. Ton but est d'éduquer, pas de culpa
     );
 };
 
-const ChatBot = ({ botName, botType, initialMessage, systemPrompt }) => {
-    // Load from localStorage or use initial message
+const ChatBot = ({ botType, initialMessage, systemPrompt, setCredibilityScore, setSources, setVerdict }) => {
     const [messages, setMessages] = useState(() => {
         const saved = localStorage.getItem(`avenird_chat_${botType}`);
         return saved ? JSON.parse(saved) : [{ role: 'model', parts: [{ text: initialMessage }] }];
@@ -124,12 +170,10 @@ const ChatBot = ({ botName, botType, initialMessage, systemPrompt }) => {
         }
     };
 
-    // Save to localStorage whenever messages change
     useEffect(() => {
         localStorage.setItem(`avenird_chat_${botType}`, JSON.stringify(messages));
     }, [messages, botType]);
 
-    // Scroll only when messages change
     useEffect(() => {
         scrollToBottom();
     }, [messages]);
@@ -141,7 +185,6 @@ const ChatBot = ({ botName, botType, initialMessage, systemPrompt }) => {
         setInput('');
         setLoading(true);
 
-        // Add user message to UI immediately
         const newHistory = [...messages, { role: 'user', parts: [{ text: userText }] }];
         setMessages(newHistory);
 
@@ -149,12 +192,7 @@ const ChatBot = ({ botName, botType, initialMessage, systemPrompt }) => {
             const genAI = new GoogleGenerativeAI(API_KEY);
             const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-lite" });
 
-            // Construct chat history for Gemini
-            // Gemini requires history to start with 'user'. 
-            // We filter out the initial welcome message (role: 'model') if it's the first item.
             const historyForGemini = newHistory.filter((msg, index) => {
-                // Keep if it's not the very first message OR if the first message is somehow from user (unlikely given our init)
-                // Actually, simpler: just remove the first message if it is the welcome message (role model)
                 if (index === 0 && msg.role === 'model') return false;
                 return true;
             }).map(m => ({
@@ -162,20 +200,39 @@ const ChatBot = ({ botName, botType, initialMessage, systemPrompt }) => {
                 parts: m.parts
             }));
 
-            // If history is empty after filtering (first user message), startChat with empty history
             const chat = model.startChat({
-                history: historyForGemini.slice(0, -1), // Exclude the very last message which is the new user message we want to send via sendMessage
+                history: historyForGemini.slice(0, -1),
                 generationConfig: {
-                    maxOutputTokens: 500,
+                    maxOutputTokens: 1000,
                 },
             });
 
-            // Send the message with the system prompt context
             const result = await chat.sendMessage(`${systemPrompt}\n\nUser message: ${userText}`);
             const response = await result.response;
             const text = response.text();
 
-            setMessages(prev => [...prev, { role: 'model', parts: [{ text: text }] }]);
+            if (botType === 'truthbot' && setCredibilityScore && setSources && setVerdict) {
+                try {
+                    const jsonMatch = text.match(/```json\s*\n?([\s\S]*?)\n?```/);
+                    if (jsonMatch) {
+                        const jsonText = jsonMatch[1];
+                        const data = JSON.parse(jsonText);
+
+                        if (data.score !== undefined) setCredibilityScore(data.score);
+                        if (data.verdict) setVerdict(data.verdict);
+                        if (data.sources && Array.isArray(data.sources)) setSources(data.sources);
+
+                        setMessages(prev => [...prev, { role: 'model', parts: [{ text: data.analysis || text }] }]);
+                    } else {
+                        setMessages(prev => [...prev, { role: 'model', parts: [{ text: text }] }]);
+                    }
+                } catch (parseError) {
+                    console.error("JSON parse error:", parseError);
+                    setMessages(prev => [...prev, { role: 'model', parts: [{ text: text }] }]);
+                }
+            } else {
+                setMessages(prev => [...prev, { role: 'model', parts: [{ text: text }] }]);
+            }
         } catch (error) {
             console.error("Gemini Error:", error);
             setMessages(prev => [...prev, { role: 'model', parts: [{ text: "Oups, j'ai eu un petit bug de cerveau numérique. Réessaie ?" }] }]);
@@ -201,7 +258,7 @@ const ChatBot = ({ botName, botType, initialMessage, systemPrompt }) => {
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     onKeyPress={(e) => e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), handleSend())}
-                    placeholder={botType === 'chatbruti' ? "Pose une question stupide..." : "Collez un texte à vérifier..."}
+                    placeholder={botType === 'chatbruti' ? "Pose une question stupide..." : "Collez un texte, URL ou tweet à vérifier..."}
                 />
                 <button onClick={handleSend} disabled={loading}>Envoyer</button>
             </div>
@@ -209,6 +266,11 @@ const ChatBot = ({ botName, botType, initialMessage, systemPrompt }) => {
                 <button onClick={() => {
                     localStorage.removeItem(`avenird_chat_${botType}`);
                     setMessages([{ role: 'model', parts: [{ text: initialMessage }] }]);
+                    if (botType === 'truthbot' && setCredibilityScore && setSources && setVerdict) {
+                        setCredibilityScore(null);
+                        setSources([]);
+                        setVerdict(null);
+                    }
                 }} style={{ fontSize: '0.8rem', opacity: 0.7, background: 'none', border: 'none', color: 'inherit', cursor: 'pointer', marginTop: '10px', textDecoration: 'underline' }}>
                     Effacer la conversation
                 </button>
