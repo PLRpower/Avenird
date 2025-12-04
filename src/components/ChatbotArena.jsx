@@ -3,6 +3,8 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import ReactMarkdown from 'react-markdown';
+import chatbrutiImg from '../assets/images/chatbruti.png';
+import truthbotImg from '../assets/images/truthbot.png';
 import './ChatbotArena.scss';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -60,6 +62,7 @@ const ChatbotArena = () => {
                         key="chatbruti"
                         botName="Chat'bruti"
                         botType="chatbruti"
+                        avatar={chatbrutiImg}
                         initialMessage="Salut ! Je suis Chat'bruti. Pose-moi une question, je te promets de ne pas y répondre correctement ! 🙃"
                         systemPrompt="Tu es Chat'bruti, un chatbot inutile, incompétent et un peu arrogant. Tu ne réponds JAMAIS directement aux questions. Tu fais des blagues nulles, tu changes de sujet, tu fais des remarques philosophiques absurdes, tu parles de ton chat imaginaire, ou tu prétends ne pas comprendre. Ton but est d'être drôle mais frustrant pour l'utilisateur. Ne donne jamais d'information utile. SOIS CONCIS, fais des réponses courtes et percutantes (max 2-3 phrases)."
                     />
@@ -68,34 +71,9 @@ const ChatbotArena = () => {
                         key="truthbot"
                         botName="TruthBot"
                         botType="truthbot"
-                        initialMessage="Bonjour, je suis TruthBot 🛡️, votre allié contre la désinformation dans le cadre du projet AI4GOOD. Envoyez-moi un lien (site web, tweet), un texte ou une affirmation à vérifier, et je vous fournirai une analyse détaillée avec sources pour distinguer le vrai du faux."
-                        systemPrompt="Tu es TruthBot, un assistant IA expert en fact-checking développé pour le projet AI4GOOD. Ta mission est de lutter contre la désinformation en analysant rigoureusement tout contenu soumis (URL, tweet, article, affirmation). 
-
-Pour chaque analyse, tu DOIS structurer ta réponse ainsi:
-
-📊 **ANALYSE DE FIABILITÉ**
-- Évalue si le contenu semble vrai, partiellement vrai, trompeur, ou faux
-- Attribue un score de crédibilité (0-10)
-
-✅ **ÉLÉMENTS VRAIS**
-- Liste les affirmations vérifiables et exactes
-- Pour chaque point vrai, indique pourquoi c'est vrai
-
-❌ **ÉLÉMENTS FAUX OU TROMPEURS**
-- Liste les affirmations fausses, trompeuses ou non vérifiables
-- Explique pourquoi elles sont problématiques
-- Identifie les techniques de manipulation (biais, sophismes, cherry-picking, etc.)
-
-🔍 **SOURCES ET VÉRIFICATION**
-- Suggère des sources fiables pour vérifier (sites de fact-checking comme AFP Factuel, Le Monde Décodeurs, Snopes, FactCheck.org)
-- Si l'utilisateur a fourni une URL, analyse le contexte du site (domaine connu, date, auteur)
-- Propose des mots-clés pour rechercher plus d'informations
-
-💡 **RECOMMANDATIONS**
-- Conseils pour développer l'esprit critique
-- Signaux d'alerte à surveiller (titres sensationnalistes, absence de sources, etc.)
-
-Sois pédagogique, bienveillant et précis. Ton but est d'éduquer, pas de culpabiliser. Si l'information manque de contexte pour une analyse complète, explique-le clairement."
+                        avatar={truthbotImg}
+                        initialMessage="Bonjour. Je suis TruthBot. Soumettez-moi une information, un tweet ou un texte, et j'analyserai sa fiabilité. 🛡️"
+                        systemPrompt="Tu es TruthBot, un assistant expert en fact-checking, esprit critique et éthique numérique. Ton but est d'analyser le texte fourni par l'utilisateur pour détecter de la désinformation potentielle, des biais cognitifs, des sophismes ou des fausses nouvelles. Sois pédagogique, bienveillant et précis. Explique pourquoi une information semble douteuse ou fiable. Cite des sources si possible ou explique comment vérifier. SOIS CONCIS et direct, évite les longs pavés, va à l'essentiel."
                     />
                 )}
             </div>
@@ -103,7 +81,7 @@ Sois pédagogique, bienveillant et précis. Ton but est d'éduquer, pas de culpa
     );
 };
 
-const ChatBot = ({ botName, botType, initialMessage, systemPrompt }) => {
+const ChatBot = ({ botName, botType, initialMessage, systemPrompt, avatar }) => {
     // Load from localStorage or use initial message
     const [messages, setMessages] = useState(() => {
         const saved = localStorage.getItem(`avenird_chat_${botType}`);
@@ -189,12 +167,26 @@ const ChatBot = ({ botName, botType, initialMessage, systemPrompt }) => {
             <div className="chat-messages" ref={messagesContainerRef}>
                 {messages.map((msg, idx) => (
                     <div key={idx} className={`message ${msg.role === 'model' ? 'bot' : 'user'}`}>
+                        {msg.role === 'model' && avatar && (
+                            <div className="avatar">
+                                <img src={avatar} alt={botName} />
+                            </div>
+                        )}
                         <div className="bubble">
                             <ReactMarkdown>{msg.parts[0].text}</ReactMarkdown>
                         </div>
                     </div>
                 ))}
-                {loading && <div className="message bot"><div className="bubble">...</div></div>}
+                {loading && (
+                    <div className="message bot">
+                        {avatar && (
+                            <div className="avatar">
+                                <img src={avatar} alt={botName} />
+                            </div>
+                        )}
+                        <div className="bubble">...</div>
+                    </div>
+                )}
             </div>
             <div className="chat-input">
                 <textarea
