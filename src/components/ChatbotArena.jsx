@@ -6,22 +6,26 @@ import './ChatbotArena.scss';
 
 gsap.registerPlugin(ScrollTrigger);
 
+// ⚠️ In a real production app, never expose API keys on the client side!
+// Since this is for a hackathon/demo, we'll use it here.
+const API_KEY = "AIzaSyCoDixLwEyyUCb-a6eRLtLop-eanS5Dwsg";
+
 const ChatbotArena = () => {
     const [activeBot, setActiveBot] = useState('chatbruti'); // 'chatbruti' or 'truthbot'
-    const [apiKey, setApiKey] = useState('');
     const arenaRef = useRef(null);
 
     useEffect(() => {
+        // Simple fade-in
         gsap.fromTo(arenaRef.current,
-            { y: 50, opacity: 0 },
+            { autoAlpha: 0, y: 30 },
             {
+                autoAlpha: 1,
                 y: 0,
-                opacity: 1,
-                duration: 1,
-                ease: "power3.out",
+                duration: 0.8,
+                ease: "power2.out",
                 scrollTrigger: {
                     trigger: arenaRef.current,
-                    start: "top 80%",
+                    start: "top 85%",
                 }
             }
         );
@@ -47,158 +51,114 @@ const ChatbotArena = () => {
                         TruthBot 🛡️
                     </button>
                 </div>
-
-                {activeBot === 'truthbot' && (
-                    <div className="api-key-input">
-                        <input
-                            type="password"
-                            placeholder="Entrez votre clé API Gemini (optionnel)"
-                            value={apiKey}
-                            onChange={(e) => setApiKey(e.target.value)}
-                        />
-                        <small>Nécessaire pour l'analyse IA réelle. Sinon, mode simulation.</small>
-                    </div>
-                )}
             </div>
 
             <div className="arena-content">
                 {activeBot === 'chatbruti' ? (
-                    <ChatBruti />
+                    <ChatBot
+                        key="chatbruti"
+                        botName="Chat'bruti"
+                        botType="chatbruti"
+                        initialMessage="Salut ! Je suis Chat'bruti. Pose-moi une question, je te promets de ne pas y répondre correctement ! 🙃"
+                        systemPrompt="Tu es Chat'bruti, un chatbot inutile, incompétent et un peu arrogant. Tu ne réponds JAMAIS directement aux questions. Tu fais des blagues nulles, tu changes de sujet, tu fais des remarques philosophiques absurdes, tu parles de ton chat imaginaire, ou tu prétends ne pas comprendre. Ton but est d'être drôle mais frustrant pour l'utilisateur. Ne donne jamais d'information utile."
+                    />
                 ) : (
-                    <TruthBot apiKey={apiKey} />
+                    <ChatBot
+                        key="truthbot"
+                        botName="TruthBot"
+                        botType="truthbot"
+                        initialMessage="Bonjour. Je suis TruthBot. Soumettez-moi une information, un tweet ou un texte, et j'analyserai sa fiabilité. 🛡️"
+                        systemPrompt="Tu es TruthBot, un assistant expert en fact-checking, esprit critique et éthique numérique. Ton but est d'analyser le texte fourni par l'utilisateur pour détecter de la désinformation potentielle, des biais cognitifs, des sophismes ou des fausses nouvelles. Sois pédagogique, bienveillant et précis. Explique pourquoi une information semble douteuse ou fiable. Cite des sources si possible ou explique comment vérifier."
+                    />
                 )}
             </div>
         </div>
     );
 };
 
-const ChatBruti = () => {
-    const [messages, setMessages] = useState([
-        { role: 'bot', content: "Salut ! Je suis Chat'bruti. Pose-moi une question, je te promets de ne pas y répondre correctement ! 🙃" }
-    ]);
-    const [input, setInput] = useState('');
-    const chatEndRef = useRef(null);
+const ChatBot = ({ botName, botType, initialMessage, systemPrompt }) => {
+    // Load from localStorage or use initial message
+    const [messages, setMessages] = useState(() => {
+        const saved = localStorage.getItem(`avenird_chat_${botType}`);
+        return saved ? JSON.parse(saved) : [{ role: 'model', parts: [{ text: initialMessage }] }];
+    });
 
-    const scrollToBottom = () => {
-        chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
-    };
-
-    useEffect(scrollToBottom, [messages]);
-
-    const handleSend = () => {
-        if (!input.trim()) return;
-
-        const userMsg = { role: 'user', content: input };
-        setMessages(prev => [...prev, userMsg]);
-        setInput('');
-
-        // Simulate "thinking" time
-        setTimeout(() => {
-            const responses = [
-                "C'est une excellente question, mais as-tu déjà pensé à la couleur du vent ?",
-                "Je pourrais répondre, mais mon horoscope me l'interdit aujourd'hui.",
-                "42. C'est toujours 42. Ou peut-être 43 si on compte la TVA.",
-                "Ah, les humains et leurs questions... C'est mignon.",
-                "J'ai demandé à mon chat, il a miaulé. Je pense que ça veut dire 'non'.",
-                "Tu sais, la réponse est au fond de toi. Ou dans ton frigo.",
-                "Error 404: Motivation not found.",
-                "Je suis un modèle de langage entraîné sur des blagues Carambar. Désolé.",
-                "Est-ce que cette question est bio ?",
-                "Je préfère ne pas répondre sans la présence de mon avocat (qui est un ficus)."
-            ];
-            const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-            setMessages(prev => [...prev, { role: 'bot', content: randomResponse }]);
-        }, 1000);
-    };
-
-    return (
-        <div className="chat-interface chat-bruti">
-            <div className="chat-messages">
-                {messages.map((msg, idx) => (
-                    <div key={idx} className={`message ${msg.role}`}>
-                        <div className="bubble">{msg.content}</div>
-                    </div>
-                ))}
-                <div ref={chatEndRef} />
-            </div>
-            <div className="chat-input">
-                <input
-                    type="text"
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && handleSend()}
-                    placeholder="Pose une question stupide..."
-                />
-                <button onClick={handleSend}>Envoyer</button>
-            </div>
-        </div>
-    );
-};
-
-const TruthBot = ({ apiKey }) => {
-    const [messages, setMessages] = useState([
-        { role: 'bot', content: "Bonjour. Je suis TruthBot. Soumettez-moi une information, un tweet ou un texte, et j'analyserai sa fiabilité. 🛡️" }
-    ]);
     const [input, setInput] = useState('');
     const [loading, setLoading] = useState(false);
     const chatEndRef = useRef(null);
 
+    // Save to localStorage whenever messages change
+    useEffect(() => {
+        localStorage.setItem(`avenird_chat_${botType}`, JSON.stringify(messages));
+    }, [messages, botType]);
+
     const scrollToBottom = () => {
         chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
     };
 
     useEffect(scrollToBottom, [messages]);
 
-    const analyzeWithGemini = async (text) => {
-        if (!apiKey) {
-            return "Mode Simulation : J'ai détecté plusieurs indicateurs de fiabilité douteuse dans ce texte. L'absence de sources citées et l'utilisation d'un langage émotionnel fort suggèrent qu'il faut être prudent. (Entrez une clé API pour une vraie analyse)";
-        }
-
-        try {
-            const genAI = new GoogleGenerativeAI(apiKey);
-            const model = genAI.getGenerativeModel({ model: "gemini-pro" });
-
-            const prompt = `Tu es TruthBot, un assistant expert en fact-checking et éthique numérique. Analyse le texte suivant pour détecter de la désinformation potentielle, des biais ou des fausses nouvelles. Sois pédagogique, explique pourquoi c'est douteux ou fiable. Texte à analyser : "${text}"`;
-
-            const result = await model.generateContent(prompt);
-            const response = await result.response;
-            return response.text();
-        } catch (error) {
-            console.error("Gemini Error:", error);
-            return "Erreur lors de la connexion à Gemini. Vérifiez votre clé API.";
-        }
-    };
-
     const handleSend = async () => {
         if (!input.trim()) return;
 
-        const userMsg = { role: 'user', content: input };
-        setMessages(prev => [...prev, userMsg]);
+        const userText = input;
         setInput('');
         setLoading(true);
 
-        const analysis = await analyzeWithGemini(input);
+        // Add user message to UI immediately
+        const newHistory = [...messages, { role: 'user', parts: [{ text: userText }] }];
+        setMessages(newHistory);
 
-        setMessages(prev => [...prev, { role: 'bot', content: analysis }]);
-        setLoading(false);
+        try {
+            const genAI = new GoogleGenerativeAI(API_KEY);
+            const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-lite" });
+
+            // Construct chat history for Gemini
+            // Gemini requires history to start with 'user'. 
+            // We filter out the initial welcome message (role: 'model') if it's the first item.
+            const historyForGemini = newHistory.filter((msg, index) => {
+                // Keep if it's not the very first message OR if the first message is somehow from user (unlikely given our init)
+                // Actually, simpler: just remove the first message if it is the welcome message (role model)
+                if (index === 0 && msg.role === 'model') return false;
+                return true;
+            }).map(m => ({
+                role: m.role === 'bot' ? 'model' : m.role,
+                parts: m.parts
+            }));
+
+            // If history is empty after filtering (first user message), startChat with empty history
+            const chat = model.startChat({
+                history: historyForGemini.slice(0, -1), // Exclude the very last message which is the new user message we want to send via sendMessage
+                generationConfig: {
+                    maxOutputTokens: 500,
+                },
+            });
+
+            // Send the message with the system prompt context
+            const result = await chat.sendMessage(`${systemPrompt}\n\nUser message: ${userText}`);
+            const response = await result.response;
+            const text = response.text();
+
+            setMessages(prev => [...prev, { role: 'model', parts: [{ text: text }] }]);
+        } catch (error) {
+            console.error("Gemini Error:", error);
+            setMessages(prev => [...prev, { role: 'model', parts: [{ text: "Oups, j'ai eu un petit bug de cerveau numérique. Réessaie ?" }] }]);
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
-        <div className="chat-interface truth-bot">
+        <div className={`chat-interface ${botType}`}>
             <div className="chat-messages">
                 {messages.map((msg, idx) => (
-                    <div key={idx} className={`message ${msg.role}`}>
+                    <div key={idx} className={`message ${msg.role === 'model' ? 'bot' : 'user'}`}>
                         <div className="bubble">
-                            {msg.role === 'bot' ? (
-                                // Simple markdown rendering replacement for safety
-                                msg.content.split('\n').map((line, i) => <p key={i}>{line}</p>)
-                            ) : (
-                                msg.content
-                            )}
+                            {msg.parts[0].text.split('\n').map((line, i) => <p key={i}>{line}</p>)}
                         </div>
                     </div>
                 ))}
-                {loading && <div className="message bot"><div className="bubble">Analyse en cours... 🔍</div></div>}
+                {loading && <div className="message bot"><div className="bubble">...</div></div>}
                 <div ref={chatEndRef} />
             </div>
             <div className="chat-input">
@@ -206,9 +166,17 @@ const TruthBot = ({ apiKey }) => {
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     onKeyPress={(e) => e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), handleSend())}
-                    placeholder="Collez un texte à vérifier..."
+                    placeholder={botType === 'chatbruti' ? "Pose une question stupide..." : "Collez un texte à vérifier..."}
                 />
-                <button onClick={handleSend} disabled={loading}>Analyser</button>
+                <button onClick={handleSend} disabled={loading}>Envoyer</button>
+            </div>
+            <div className="clear-chat">
+                <button onClick={() => {
+                    localStorage.removeItem(`avenird_chat_${botType}`);
+                    setMessages([{ role: 'model', parts: [{ text: initialMessage }] }]);
+                }} style={{ fontSize: '0.8rem', opacity: 0.7, background: 'none', border: 'none', color: 'inherit', cursor: 'pointer', marginTop: '10px', textDecoration: 'underline' }}>
+                    Effacer la conversation
+                </button>
             </div>
         </div>
     );

@@ -33,41 +33,46 @@ function App() {
 
     requestAnimationFrame(raf);
 
-    // GSAP Animations
+    // GSAP Animations - Simplified
     const tl = gsap.timeline();
 
+    // Animate Hero Section immediately
     tl.to(titleRef.current, {
       y: 0,
       opacity: 1,
-      duration: 1.5,
-      ease: "power4.out",
-      delay: 0.2
+      duration: 1,
+      ease: "power3.out"
     })
       .to(textRef.current, {
         y: 0,
         opacity: 1,
-        duration: 1,
+        duration: 0.8,
         ease: "power3.out"
-      }, "-=1")
+      }, "-=0.5")
       .to(scrollRef.current, {
         opacity: 1,
-        duration: 1,
-        ease: "power2.out"
-      }, "-=0.5");
+        duration: 0.8
+      }, "-=0.3");
 
-    // Scroll Animations for content sections
-    gsap.utils.toArray('.content-section').forEach(section => {
-      gsap.from(section, {
-        scrollTrigger: {
-          trigger: section,
-          start: "top 80%",
-          toggleActions: "play none none reverse"
-        },
-        y: 50,
-        opacity: 0,
-        duration: 1,
-        ease: "power3.out"
-      });
+    // Simple fade-in for content sections on scroll
+    // We use a simpler approach: set initial state in CSS or here, then animate to visible
+    const sections = gsap.utils.toArray('.content-section');
+
+    sections.forEach(section => {
+      gsap.fromTo(section,
+        { autoAlpha: 0, y: 30 }, // autoAlpha handles opacity + visibility
+        {
+          autoAlpha: 1,
+          y: 0,
+          duration: 0.8,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: section,
+            start: "top 85%", // Trigger a bit earlier
+            toggleActions: "play none none reverse"
+          }
+        }
+      );
     });
 
     return () => {
