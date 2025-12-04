@@ -1,0 +1,54 @@
+@font-face {
+  font-family: 'Cy Grotesk Wide';
+  src: url('./assets/fonts/cy-grotesk-wide.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+:root {
+  --color-primary: #a92215;
+  --color-secondary: #2d2727;
+  --color-text: #f5eee4;
+  --color-black: #000000;
+  --color-white: #ffffff;
+
+  --font-title: 'Cy Grotesk Wide', 'Unbounded', sans-serif;
+  /* Utilise la police custom en priorité */
+  --font-text: 'Poppins', sans-serif;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-text);
+  background-color: var(--color-primary);
+  color: var(--color-text);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Smooth scrolling wrapper if using Lenis */
+html.lenis {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
+}

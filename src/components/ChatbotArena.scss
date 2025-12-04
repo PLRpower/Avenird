@@ -1,0 +1,178 @@
+.chatbot-arena-container {
+    padding: 4rem 0;
+    color: var(--color-text);
+
+    .arena-header {
+        text-align: center;
+        margin-bottom: 3rem;
+
+        h2 {
+            font-family: var(--font-title);
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--color-text);
+        }
+
+        p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+
+        .bot-selector {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+
+            .selector-btn {
+                padding: 1rem 2rem;
+                font-family: var(--font-title);
+                font-size: 1rem;
+                border: 2px solid var(--color-text);
+                background: transparent;
+                color: var(--color-text);
+                cursor: pointer;
+                transition: all 0.3s ease;
+                text-transform: uppercase;
+
+                &:hover,
+                &.active {
+                    background: var(--color-text);
+                    color: var(--color-primary);
+                }
+            }
+        }
+
+        .api-key-input {
+            max-width: 400px;
+            margin: 0 auto;
+
+            input {
+                width: 100%;
+                padding: 0.5rem;
+                background: rgba(0, 0, 0, 0.2);
+                border: 1px solid rgba(255, 255, 255, 0.3);
+                color: white;
+                margin-bottom: 0.5rem;
+
+                &::placeholder {
+                    color: rgba(255, 255, 255, 0.5);
+                }
+            }
+
+            small {
+                opacity: 0.7;
+            }
+        }
+    }
+
+    .arena-content {
+        max-width: 800px;
+        margin: 0 auto;
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 20px;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        height: 600px;
+        display: flex;
+        flex-direction: column;
+
+        .chat-interface {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+
+            .chat-messages {
+                flex: 1;
+                padding: 2rem;
+                overflow-y: auto;
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+
+                .message {
+                    display: flex;
+
+                    &.user {
+                        justify-content: flex-end;
+
+                        .bubble {
+                            background: var(--color-text);
+                            color: var(--color-primary);
+                            border-bottom-right-radius: 2px;
+                        }
+                    }
+
+                    &.bot {
+                        justify-content: flex-start;
+
+                        .bubble {
+                            background: rgba(255, 255, 255, 0.1);
+                            color: white;
+                            border-bottom-left-radius: 2px;
+                        }
+                    }
+
+                    .bubble {
+                        max-width: 80%;
+                        padding: 1rem;
+                        border-radius: 15px;
+                        line-height: 1.5;
+
+                        p {
+                            margin-bottom: 0.5rem;
+
+                            &:last-child {
+                                margin-bottom: 0;
+                            }
+                        }
+                    }
+                }
+            }
+
+            .chat-input {
+                padding: 1.5rem;
+                background: rgba(0, 0, 0, 0.3);
+                display: flex;
+                gap: 1rem;
+
+                input,
+                textarea {
+                    flex: 1;
+                    background: transparent;
+                    border: 1px solid rgba(255, 255, 255, 0.3);
+                    padding: 1rem;
+                    color: white;
+                    border-radius: 8px;
+                    font-family: var(--font-text);
+                    resize: none;
+
+                    &:focus {
+                        outline: none;
+                        border-color: var(--color-text);
+                    }
+                }
+
+                button {
+                    padding: 0 2rem;
+                    background: var(--color-text);
+                    color: var(--color-primary);
+                    border: none;
+                    border-radius: 8px;
+                    font-weight: bold;
+                    cursor: pointer;
+                    transition: transform 0.2s;
+
+                    &:hover {
+                        transform: scale(1.05);
+                    }
+
+                    &:disabled {
+                        opacity: 0.5;
+                        cursor: not-allowed;
+                    }
+                }
+            }
+        }
+    }
+}

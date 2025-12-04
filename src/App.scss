@@ -1,0 +1,208 @@
+.main-container {
+    display: flex;
+    width: 100vw;
+    min-height: 100vh;
+    position: relative;
+    overflow: hidden;
+
+    .content-left {
+        flex: 1;
+        /* background-color: var(--color-primary); Removed to allow body red to show */
+        padding: 4rem 6rem;
+        padding-right: calc(15vw + 4rem);
+        /* Prevent normal text from hitting sidebar */
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        position: relative;
+        z-index: 5;
+        /* Above sidebar */
+
+        .hero-section {
+            min-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        h1 {
+            font-family: var(--font-title);
+            font-size: 12vw;
+            line-height: 0.9;
+            text-transform: uppercase;
+            margin-bottom: 2rem;
+
+            /* Split Color Logic */
+            width: 100vw;
+            /* Span full viewport width */
+            margin-left: -6rem;
+            /* Counteract parent padding to start at left edge */
+            padding-left: 6rem;
+            /* Restore visual alignment */
+
+            background-image: linear-gradient(to right,
+                    var(--color-text) 0%,
+                    var(--color-text) 85%,
+                    var(--color-primary) 85%,
+                    var(--color-primary) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+
+            position: relative;
+            /* z-index is inherited from parent (5), which is > sidebar (2) */
+
+            opacity: 0;
+            /* For GSAP */
+            transform: translateY(50px);
+        }
+
+        p {
+            font-size: 1.5rem;
+            max-width: 600px;
+            line-height: 1.6;
+            opacity: 0;
+            /* For GSAP */
+            transform: translateY(30px);
+        }
+
+        .scroll-indicator {
+            margin-top: 4rem;
+            font-family: var(--font-title);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            opacity: 0;
+        }
+
+        .content-section {
+            padding: 10rem 0;
+
+            h2 {
+                font-family: var(--font-title);
+                font-size: 4rem;
+                margin-bottom: 2rem;
+            }
+
+            p {
+                font-size: 1.2rem;
+                margin-bottom: 1.5rem;
+                opacity: 1;
+                transform: none;
+            }
+        }
+    }
+
+    .sidebar-right {
+        width: 15vw;
+        /* Small rectangle on the right */
+        background-color: var(--color-secondary);
+        height: 100vh;
+        position: fixed;
+        right: 0;
+        top: 0;
+        z-index: 2;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+        padding: 2rem 0;
+        border-left: 1px solid rgba(255, 255, 255, 0.1);
+
+        .logo {
+            font-family: var(--font-title);
+            font-weight: 900;
+            font-size: 1.5rem;
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            transform: rotate(180deg);
+        }
+
+        .menu-btn {
+            width: 50px;
+            height: 50px;
+            border: 1px solid var(--color-text);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+
+            &:hover {
+                background-color: var(--color-text);
+
+                span {
+                    background-color: var(--color-secondary);
+                }
+            }
+
+            span {
+                display: block;
+                width: 20px;
+                height: 2px;
+                background-color: var(--color-text);
+                position: relative;
+
+                &::before,
+                &::after {
+                    content: '';
+                    position: absolute;
+                    width: 100%;
+                    height: 100%;
+                    background-color: inherit;
+                    left: 0;
+                }
+
+                &::before {
+                    top: -6px;
+                }
+
+                &::after {
+                    top: 6px;
+                }
+            }
+        }
+    }
+}
+
+@media (max-width: 768px) {
+    .main-container {
+        flex-direction: column;
+
+        .sidebar-right {
+            width: 100%;
+            height: 80px;
+            position: fixed;
+            bottom: 0;
+            top: auto;
+            flex-direction: row;
+            padding: 0 2rem;
+            border-left: none;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+
+            .logo {
+                writing-mode: horizontal-tb;
+                transform: none;
+            }
+        }
+
+        .content-left {
+            padding: 2rem;
+            padding-bottom: 100px;
+            padding-right: 2rem;
+            /* Reset padding on mobile */
+
+            h1 {
+                font-size: 15vw;
+                width: auto;
+                margin-left: 0;
+                padding-left: 0;
+                background-image: none;
+                background-clip: border-box;
+                -webkit-background-clip: border-box;
+                color: var(--color-text);
+            }
+        }
+    }
+}
