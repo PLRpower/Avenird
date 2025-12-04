@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import ReactMarkdown from 'react-markdown';
 import './ChatbotArena.scss';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -60,7 +61,7 @@ const ChatbotArena = () => {
                         botName="Chat'bruti"
                         botType="chatbruti"
                         initialMessage="Salut ! Je suis Chat'bruti. Pose-moi une question, je te promets de ne pas y répondre correctement ! 🙃"
-                        systemPrompt="Tu es Chat'bruti, un chatbot inutile, incompétent et un peu arrogant. Tu ne réponds JAMAIS directement aux questions. Tu fais des blagues nulles, tu changes de sujet, tu fais des remarques philosophiques absurdes, tu parles de ton chat imaginaire, ou tu prétends ne pas comprendre. Ton but est d'être drôle mais frustrant pour l'utilisateur. Ne donne jamais d'information utile."
+                        systemPrompt="Tu es Chat'bruti, un chatbot inutile, incompétent et un peu arrogant. Tu ne réponds JAMAIS directement aux questions. Tu fais des blagues nulles, tu changes de sujet, tu fais des remarques philosophiques absurdes, tu parles de ton chat imaginaire, ou tu prétends ne pas comprendre. Ton but est d'être drôle mais frustrant pour l'utilisateur. Ne donne jamais d'information utile. SOIS CONCIS, fais des réponses courtes et percutantes (max 2-3 phrases)."
                     />
                 ) : (
                     <ChatBot
@@ -68,7 +69,7 @@ const ChatbotArena = () => {
                         botName="TruthBot"
                         botType="truthbot"
                         initialMessage="Bonjour. Je suis TruthBot. Soumettez-moi une information, un tweet ou un texte, et j'analyserai sa fiabilité. 🛡️"
-                        systemPrompt="Tu es TruthBot, un assistant expert en fact-checking, esprit critique et éthique numérique. Ton but est d'analyser le texte fourni par l'utilisateur pour détecter de la désinformation potentielle, des biais cognitifs, des sophismes ou des fausses nouvelles. Sois pédagogique, bienveillant et précis. Explique pourquoi une information semble douteuse ou fiable. Cite des sources si possible ou explique comment vérifier."
+                        systemPrompt="Tu es TruthBot, un assistant expert en fact-checking, esprit critique et éthique numérique. Ton but est d'analyser le texte fourni par l'utilisateur pour détecter de la désinformation potentielle, des biais cognitifs, des sophismes ou des fausses nouvelles. Sois pédagogique, bienveillant et précis. Explique pourquoi une information semble douteuse ou fiable. Cite des sources si possible ou explique comment vérifier. SOIS CONCIS et direct, évite les longs pavés, va à l'essentiel."
                     />
                 )}
             </div>
@@ -97,8 +98,12 @@ const ChatBot = ({ botName, botType, initialMessage, systemPrompt }) => {
         }
     };
 
-    // Scroll only when messages change, but use a ref to track if it's the initial load to avoid jump? 
-    // Actually scrollTop won't scroll the window, so it's safe.
+    // Save to localStorage whenever messages change
+    useEffect(() => {
+        localStorage.setItem(`avenird_chat_${botType}`, JSON.stringify(messages));
+    }, [messages, botType]);
+
+    // Scroll only when messages change
     useEffect(() => {
         scrollToBottom();
     }, [messages]);
@@ -159,7 +164,7 @@ const ChatBot = ({ botName, botType, initialMessage, systemPrompt }) => {
                 {messages.map((msg, idx) => (
                     <div key={idx} className={`message ${msg.role === 'model' ? 'bot' : 'user'}`}>
                         <div className="bubble">
-                            {msg.parts[0].text.split('\n').map((line, i) => <p key={i}>{line}</p>)}
+                            <ReactMarkdown>{msg.parts[0].text}</ReactMarkdown>
                         </div>
                     </div>
                 ))}

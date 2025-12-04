@@ -126,6 +126,33 @@
                                 margin-bottom: 0;
                             }
                         }
+
+                        /* Markdown Styles */
+                        strong {
+                            font-weight: bold;
+                        }
+
+                        em {
+                            font-style: italic;
+                        }
+
+                        ul,
+                        ol {
+                            margin-left: 1.5rem;
+                            margin-bottom: 0.5rem;
+                        }
+
+                        li {
+                            margin-bottom: 0.25rem;
+                        }
+
+                        code {
+                            background: rgba(0, 0, 0, 0.3);
+                            padding: 0.2rem 0.4rem;
+                            border-radius: 4px;
+                            font-family: monospace;
+                            font-size: 0.9em;
+                        }
                     }
                 }
             }
