@@ -451,14 +451,14 @@ const Contact = () => {
                     }}>
                         <p
                             ref={messageRef}
+                            className="status-message"
                             style={{
                                 fontFamily: 'monospace',
                                 fontSize: '1.2rem',
                                 padding: '10px 20px',
                                 border: '1px dashed rgba(255,255,255,0.3)',
                                 background: 'rgba(0,0,0,0.3)',
-                                display: 'inline-block',
-                                color: 'var(--color-text)'
+                                display: 'inline-block'
                             }}
                         >
                             {statusMessage}
