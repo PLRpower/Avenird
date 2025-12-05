@@ -1,7 +1,8 @@
+@use './arcade-cabinet';
+@use './penguin-snake';
+
 // Import retro pixel font from Google Fonts
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
-@import './arcade-cabinet';
-@import './penguin-snake';
 
 // Retro color palette
 $retro-bg: #0a0a0a;

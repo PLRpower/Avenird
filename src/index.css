@@ -1,11 +1,11 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap');
+
 @font-face {
   font-family: 'Cy Grotesk Wide';
   src: url('./assets/fonts/cy-grotesk-wide.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
 }
-
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap');
 
 :root {
   --color-primary: #a92215;

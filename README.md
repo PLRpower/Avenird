@@ -113,8 +113,8 @@ Les fichiers seront générés dans le dossier `dist/`.
   - Noir Secondaire : #2d2727
   - Texte : #f5eee4
 - **Polices** :
-  - Titres : Cy Grotesk Wide
-  - Textes : Poppins
+  - Titres : Cy Grotesk Wide.
+  - Textes : Poppins.
 
 ## 📁 Structure du Projet
 
