@@ -10,6 +10,7 @@ import pillarsImg from '../assets/images/pillars.png';
 import joinImg from '../assets/images/join.png';
 import linuxLogo from '../assets/images/linux.png';
 import pensesImg from '../assets/images/img_tu_penses.png';
+import franceImg from '../assets/images/france.png';
 import '../App.scss';
 import './_home-additions.scss';
 
@@ -158,29 +159,38 @@ function Home() {
                 <section className="content-section section-dark" id="demarche">
                     <div className="section-content-wrapper">
                         <div className="text-col">
-                            <h2>Les Dangers de la Dépendance Numérique</h2>
+                            <h2>Le Problème dans nos Universités</h2>
                             <p>
-                                Les établissements scolaires sont aujourd'hui piégés dans un écosystème numérique contrôlé par quelques géants technologiques.
+                                Les établissements scolaires et universitaires sont aujourd'hui piégés dans un écosystème numérique contrôlé par quelques géants technologiques.
                                 Cette dépendance entraîne des <strong>coûts croissants</strong>, une <strong>obsolescence programmée</strong> du matériel,
                                 et une <strong>perte d'autonomie</strong> dans les choix pédagogiques et techniques.
                             </p>
                             <p>
-                                Les données des élèves et enseignants sont collectées massivement, les logiciels propriétaires imposent leurs formats,
+                                Les données des étudiants et chercheurs sont collectées massivement, les logiciels propriétaires imposent leurs formats,
                                 et les équipements deviennent rapidement obsolètes, générant des tonnes de déchets électroniques.
                             </p>
                             <p>
                                 <strong>Les conséquences sont multiples :</strong> budgets engloutis dans des licences onéreuses,
-                                dépendance à des fournisseurs qui dictent leurs conditions, impossibilité de personnaliser les outils selon les besoins pédagogiques,
-                                et exposition à des risques de sécurité et de confidentialité. Les établissements perdent leur capacité à innover
-                                et à adapter leurs solutions numériques aux réalités du terrain.
-                            </p>
-                            <p>
-                                Face à ce constat alarmant, une alternative existe et devient de plus en plus pertinente :
-                                <strong> reprendre le contrôle de notre infrastructure numérique</strong> grâce aux logiciels libres et à Linux.
+                                dépendance à des fournisseurs qui dictent leurs conditions, et exposition à des risques de sécurité.
+                                Les universités perdent leur capacité à innover et à maîtriser leur propre savoir.
                             </p>
                         </div>
-                        <div className="image-col">
-                            <img src={demarcheImg} alt="Les dangers de la dépendance numérique" />
+                        <div className="text-col">
+                            <h2>Et en France ?</h2>
+                            <p>
+                                À l'échelle nationale, le constat est tout aussi alarmant. La <strong>souveraineté numérique</strong> de la France
+                                est mise à mal par l'omniprésence des solutions extra-européennes dans nos administrations et nos services publics.
+                            </p>
+                            <p>
+                                Malgré des initiatives encourageantes, le manque de <strong>volonté politique forte</strong> et de <strong>budgets dédiés</strong>
+                                freine l'adoption massive de solutions libres et souveraines. Le "Cloud Souverain" reste encore trop souvent un vœu pieux
+                                face à la puissance de frappe des GAFAM.
+                            </p>
+                            <p>
+                                Il est urgent de repenser notre stratégie numérique nationale : investir dans des <strong>infrastructures publiques</strong>,
+                                soutenir l'écosystème du logiciel libre français, et imposer des standards ouverts dans la commande publique
+                                pour garantir notre indépendance technologique future.
+                            </p>
                         </div>
                     </div>
                 </section>
@@ -289,32 +299,64 @@ function Home() {
                     </div>
                 </section>
 
-                <section className="content-section section-light" id="rejoindre" style={{ paddingBottom: '10vh' }}>
+                <section className="content-section section-light" id="solutions-locales">
                     <div className="section-content-wrapper reverse">
                         <div className="image-col">
-                            <img src={joinImg} alt="Solutions NIRD" />
+                            <img src={joinImg} alt="Solutions Locales NIRD" />
                         </div>
                         <div className="text-col">
-                            <h2>Passer à l'Action : Les Solutions Concrètes de NIRD</h2>
+                            <h2>Agir au Niveau Local</h2>
                             <p>
-                                La transition vers un numérique libre et responsable peut sembler intimidante,
-                                mais NIRD propose une <strong>approche progressive et collaborative</strong> adaptée à chaque contexte.
+                                La transformation commence sur le terrain, dans chaque classe et chaque établissement.
+                                NIRD accompagne les équipes éducatives pour mettre en place des solutions concrètes,
+                                immédiates et visibles, transformant l'école en un véritable laboratoire d'indépendance technologique.
                             </p>
                             <p>
-                                <strong>Nos actions concrètes :</strong>
+                                <strong>Nos actions de proximité :</strong>
                             </p>
                             <ul>
-                                <li><strong>Ateliers "1h pour passer ton PC sous Linux"</strong> : formations courtes et ludiques</li>
-                                <li><strong>Projets de reconditionnement</strong> : ateliers avec les élèves pour donner une seconde vie au matériel</li>
-                                <li><strong>Catalogue d'alternatives libres</strong> : pour chaque logiciel propriétaire, une solution open source</li>
-                                <li><strong>Serveurs locaux et cloud éthique</strong> : hébergement des données sur site ou chez des prestataires respectueux</li>
-                                <li><strong>Documentation et partage d'expériences</strong> : création d'une communauté d'établissements pionniers</li>
+                                <li><strong>Ateliers "1h pour passer sous Linux"</strong> : Des sessions pratiques où élèves et professeurs apprennent à installer et maîtriser un système libre, démystifiant la technique.</li>
+                                <li><strong>Clubs de Reconditionnement</strong> : Création d'espaces où le "vieux" matériel est réparé et optimisé, luttant contre l'obsolescence programmée et éduquant à l'écologie numérique.</li>
+                                <li><strong>Hébergement Local & Nextcloud</strong> : Installation de serveurs au sein même de l'établissement pour garder les données scolaires "à la maison", sécurisées et accessibles.</li>
+                                <li><strong>Substitution Logicielle</strong> : Remplacement progressif des outils propriétaires par des alternatives libres (LibreOffice, BigBlueButton, etc.) adaptées aux besoins pédagogiques.</li>
                             </ul>
                             <p>
-                                En rejoignant NIRD, les établissements deviennent des <strong>modèles de résistance numérique</strong>,
-                                prouvant qu'il est possible de concilier excellence pédagogique, responsabilité écologique,
-                                et autonomie technologique. Ensemble, construisons un avenir numérique plus juste et durable ! 🌱
+                                Ces initiatives locales créent une dynamique vertueuse : elles redonnent du sens à l'outil informatique,
+                                renforcent la cohésion de la communauté éducative et prouvent qu'une autre voie est possible, ici et maintenant.
                             </p>
+                        </div>
+                    </div>
+                </section>
+
+                <section className="content-section section-red" id="solutions-nationales" style={{ paddingBottom: '10vh' }}>
+                    <div className="section-content-wrapper">
+                        <div className="text-col">
+                            <h2>Agir au Niveau National</h2>
+                            <p>
+                                Au-delà des initiatives locales, un changement d'échelle est indispensable pour garantir l'indépendance technologique de la France.
+                                NIRD milite pour une politique publique ambitieuse, capable de soutenir et de pérenniser les alternatives libres face aux géants du numérique.
+                            </p>
+                            <p>
+                                <strong>Nos propositions pour la France :</strong>
+                            </p>
+                            <ul>
+                                <li><strong>Budgets Fléchés "Open Source"</strong> : Allouer une part significative des fonds publics spécifiquement à la migration vers des solutions libres et à leur maintenance.</li>
+                                <li><strong>Formation Initiale des Enseignants</strong> : Intégrer obligatoirement la culture du libre et la maîtrise des outils souverains dans le cursus des futurs professeurs.</li>
+                                <li><strong>Commande Publique Responsable</strong> : Modifier les critères d'appels d'offres pour donner une priorité légale aux solutions ouvertes, interopérables et hébergées en France.</li>
+                                <li><strong>Infrastructure Cloud Souveraine</strong> : Investir massivement dans un cloud éducatif national, public et auditable, véritable alternative aux suites GAFAM pour l'Éducation Nationale.</li>
+                            </ul>
+                            <p>
+                                En adoptant cette stratégie, la France peut devenir un leader mondial du numérique éthique,
+                                protégeant les données de ses citoyens et assurant son autonomie stratégique pour les décennies à venir. 🇫🇷
+                            </p>
+                        </div>
+                        <div className="image-col">
+                            <img
+                                src={franceImg}
+                                alt="Souveraineté Numérique Française"
+                                className="no-shadow"
+                                style={{ transform: 'scale(1.15)' }}
+                            />
                         </div>
                     </div>
                 </section>
