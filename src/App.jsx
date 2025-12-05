@@ -1,8 +1,9 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Lenis from '@studio-freight/lenis';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import ChatbotArena from './components/ChatbotArena';
+import SnakeGame from './components/SnakeGame';
 import Navigation from './components/Navigation';
 import demarcheImg from './assets/images/demarche.png';
 import pillarsImg from './assets/images/pillars.png';
@@ -12,6 +13,7 @@ import './App.scss';
 gsap.registerPlugin(ScrollTrigger);
 
 function App() {
+  const [showSnake, setShowSnake] = useState(false);
   const containerRef = useRef(null);
   const titleRef = useRef(null);
   const textRef = useRef(null);
@@ -128,7 +130,14 @@ function App() {
 
       <div className="content-left">
         <section className="hero-section" id="hero">
-          <h1 ref={titleRef}>AVENIRD</h1>
+          <h1
+            ref={titleRef}
+            onClick={() => setShowSnake(true)}
+            style={{ cursor: 'pointer' }}
+            title="Cliquez pour jouer au Snake !"
+          >
+            AVENIRD
+          </h1>
           <p ref={textRef}>
             Le Village Numérique Résistant. <br />
             Comment les établissements scolaires peuvent tenir tête aux Big Tech ?
@@ -198,6 +207,8 @@ function App() {
           </div>
         </section>
       </div>
+
+      {showSnake && <SnakeGame onClose={() => setShowSnake(false)} />}
     </div>
   );
 }
