@@ -23,7 +23,7 @@ Projet développé pour le défi **"Le Village Numérique Résistant"**.
 
 1. **Cloner le repository** :
    ```bash
-   git clone [URL_DU_REPO]
+   git clone https://github.com/PLRpower/Avenird.git
    cd Avenird
    ```
 
@@ -63,7 +63,6 @@ Les fichiers seront générés dans le dossier `dist/`.
 
 **Notre implémentation** : Page de contact avec un formulaire "ergonomique" unique.  
 **Champ concerné** : Tous les champs du formulaire (système de switches pour déverrouiller les champs).  
-**Contact** : maxime.granjou@soprasteria.com
 
 ---
 
@@ -71,7 +70,6 @@ Les fichiers seront générés dans le dossier `dist/`.
 **Lien** : https://www.nuitdelinfo.com/inscription/defis/473
 
 **Notre implémentation** : Chatbot IA intégré permettant de comparer les réponses de différents modèles.  
-**Livrable** : Fichier ZIP à envoyer à abdelghader.khadijetou@gmail.com
 
 ---
 
@@ -88,7 +86,6 @@ Les fichiers seront générés dans le dossier `dist/`.
 
 **Notre implémentation** : Jeu Snake caché accessible via un easter egg.  
 **Activation** : Sur la page d'accueil, dans la section "Linux et l'Open Source", cliquer sur le logo Tux (le pingouin Linux) pour lancer le jeu.  
-**Contact** : n2i@autocut.com (mail OBLIGATOIRE avec lien du site et instructions d'activation)
 
 ---
 
@@ -96,11 +93,7 @@ Les fichiers seront générés dans le dossier `dist/`.
 **Lien** : https://www.nuitdelinfo.com/inscription/defis/494
 
 **Notre implémentation** : Arena de chatbots avec interface de comparaison.  
-**Informations à envoyer** à nuitdelinfo@viveris.fr :
-- Nom de l'équipe : AVENIRD
-- École : [À compléter]
-- Repository : [URL du repository]
-- Instance de production : [URL si hébergée]
+
 
 ## 🛠️ Stack Technique
 
