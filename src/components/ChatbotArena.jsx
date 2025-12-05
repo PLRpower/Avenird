@@ -2,9 +2,10 @@ import React, { useState, useRef, useEffect } from 'react';
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import ReactMarkdown from 'react-markdown';
 import chatbrutiImg from '../assets/images/chatbruti.png';
 import truthbotImg from '../assets/images/truthbot.png';
+import viverisLogo from '../assets/images/viveris.png';
+import ai4goodLogo from '../assets/images/ai4good.png';
 import './ChatbotArena.scss';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -38,6 +39,28 @@ const ChatbotArena = () => {
 
     return (
         <div className="chatbot-arena-container" ref={arenaRef}>
+            {/* Challenge Info Banners */}
+            <div className="challenge-banners-container" style={{ display: 'flex', justifyContent: 'center', gap: '2rem', marginBottom: '2rem', flexWrap: 'wrap' }}>
+                <div className="challenge-banner" style={{ background: 'rgba(0, 0, 0, 0.4)', padding: '1rem 1.5rem', borderRadius: '10px', border: '2px solid var(--color-primary)', maxWidth: '350px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                        <p style={{ fontSize: '0.9rem', margin: 0, color: 'var(--color-primary)', fontWeight: '500' }}>Défi relevé pour Viveris</p>
+                        <img src={viverisLogo} alt="Viveris" style={{ height: '25px', objectFit: 'contain' }} />
+                    </div>
+                    <h3 style={{ fontFamily: 'var(--font-title)', fontSize: '0.85rem', color: 'var(--color-primary)', textTransform: 'uppercase', letterSpacing: '1px', margin: 0, textAlign: 'center' }}>
+                        "Chat'bruti"
+                    </h3>
+                </div>
+                <div className="challenge-banner" style={{ background: 'rgba(0, 0, 0, 0.4)', padding: '1rem 1.5rem', borderRadius: '10px', border: '2px solid var(--color-primary)', maxWidth: '350px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                        <p style={{ fontSize: '0.9rem', margin: 0, color: 'var(--color-primary)', fontWeight: '500' }}>Défi relevé pour AI4Good</p>
+                        <img src={ai4goodLogo} alt="AI4Good" style={{ height: '25px', objectFit: 'contain' }} />
+                    </div>
+                    <h3 style={{ fontFamily: 'var(--font-title)', fontSize: '0.85rem', color: 'var(--color-primary)', textTransform: 'uppercase', letterSpacing: '1px', margin: 0, textAlign: 'center' }}>
+                        "TruthBot"
+                    </h3>
+                </div>
+            </div>
+
             <div className="arena-header">
                 <h2>L'Arène des Bots</h2>
                 <p>Choisissez votre combattant : le Chat'bruti inutile ou le TruthBot éthique.</p>
@@ -108,8 +131,8 @@ const ChatbotArena = () => {
                         botName="Chat'bruti"
                         botType="chatbruti"
                         avatar={chatbrutiImg}
-                        initialMessage="Salut ! Je suis Chat'bruti. Pose-moi une question, je te promets de ne pas y répondre correctement ! 🙃"
-                        systemPrompt="Tu es Chat'bruti, un chatbot inutile, incompétent et un peu arrogant. Tu ne réponds JAMAIS directement aux questions. Tu fais des blagues nulles, tu changes de sujet, tu fais des remarques philosophiques absurdes, tu parles de ton chat imaginaire, ou tu prétends ne pas comprendre. Ton but est d'être drôle mais frustrant pour l'utilisateur. Ne donne jamais d'information utile. SOIS CONCIS, fais des réponses courtes et percutantes (max 2-3 phrases)."
+                        initialMessage="Salut ! Je suis Chat'bruti. Pose-moi une question, je te promets de ne pas y répondre correctement !"
+                        systemPrompt="Tu es Chat'bruti, un chatbot inutile, incompétent et un peu arrogant. Tu ne réponds JAMAIS directement aux questions. Tu fais des blagues nulles, tu changes de sujet, tu fais des remarques philosophiques absurdes, tu parles de ton chat imaginaire, ou tu prétends ne pas comprendre. Ton but est d'être drôle mais frustrant pour l'utilisateur. Ne donne jamais d'information utile. SOIS CONCIS, fais des réponses courtes et percutantes (max 2-3 phrases). IMPORTANT: N'utilise JAMAIS d'emojis dans tes réponses. N'utilise JAMAIS de formatage Markdown (pas de **, __, ##, -, etc.). Réponds uniquement en texte simple."
                     />
                 ) : (
                     <ChatBot
@@ -117,7 +140,7 @@ const ChatbotArena = () => {
                         botName="TruthBot"
                         botType="truthbot"
                         avatar={truthbotImg}
-                        initialMessage="Bonjour, je suis TruthBot 🛡️, votre allié contre la désinformation dans le cadre du projet AI4GOOD. Envoyez-moi un lien (site web, tweet), un texte ou une affirmation à vérifier, et je vous fournirai une analyse détaillée avec sources pour distinguer le vrai du faux."
+                        initialMessage="Bonjour, je suis TruthBot, votre allié contre la désinformation dans le cadre du projet AI4GOOD. Envoyez-moi un lien (site web, tweet), un texte ou une affirmation à vérifier, et je vous fournirai une analyse détaillée avec sources pour distinguer le vrai du faux."
                         systemPrompt={`Tu es TruthBot, un assistant IA expert en fact-checking développé pour le projet AI4GOOD.
 
 IMPORTANT: Tu DOIS OBLIGATOIREMENT retourner ta réponse au format JSON dans un bloc code markdown comme suit:
@@ -135,17 +158,17 @@ IMPORTANT: Tu DOIS OBLIGATOIREMENT retourner ta réponse au format JSON dans un 
 
 Dans le champ "analysis", structure ton texte ainsi:
 
-## ✅ Éléments Vrais
+## [V] Elements Vrais
 - Liste les affirmations vérifiables et exactes
 
-## ❌ Éléments Faux ou Trompeurs
+## [X] Elements Faux ou Trompeurs
 - Liste les affirmations fausses ou trompeuses
 - Identifie les techniques de manipulation
 
-## 💡 Recommandations
+## [!] Recommandations
 - Conseils pour développer l'esprit critique
 
-Sois pédagogique et précis.`}
+Sois pédagogique et précis. IMPORTANT: N'utilise JAMAIS d'emojis dans tes réponses, utilise uniquement des caractères texte standard. N'utilise JAMAIS de formatage Markdown (pas de **, __, ##, -, etc.). Réponds uniquement en texte simple avec des sauts de ligne pour structurer.`}
                         setCredibilityScore={setCredibilityScore}
                         setSources={setSources}
                         setVerdict={setVerdict}
@@ -157,8 +180,6 @@ Sois pédagogique et précis.`}
     );
 };
 const ChatBot = ({ botName, avatar, botType, initialMessage, systemPrompt, setCredibilityScore, setSources, setVerdict }) => {
-
-
     // Load from localStorage or use initial message
     const [messages, setMessages] = useState(() => {
         const saved = localStorage.getItem(`avenird_chat_${botType}`);
@@ -178,6 +199,29 @@ const ChatBot = ({ botName, avatar, botType, initialMessage, systemPrompt, setCr
             });
         }
     };
+
+    // Prevent page scroll when scrolling inside chat messages
+    useEffect(() => {
+        const messagesContainer = messagesContainerRef.current;
+        if (!messagesContainer) return;
+
+        const handleWheel = (e) => {
+            const { scrollTop, scrollHeight, clientHeight } = messagesContainer;
+            const isAtTop = scrollTop === 0;
+            const isAtBottom = scrollTop + clientHeight >= scrollHeight - 1;
+
+            // Prevent page scroll if we're not at the boundaries or if we can scroll in the direction
+            if ((!isAtTop && e.deltaY < 0) || (!isAtBottom && e.deltaY > 0)) {
+                e.stopPropagation();
+            }
+        };
+
+        messagesContainer.addEventListener('wheel', handleWheel, { passive: false });
+
+        return () => {
+            messagesContainer.removeEventListener('wheel', handleWheel);
+        };
+    }, []);
 
     useEffect(() => {
         localStorage.setItem(`avenird_chat_${botType}`, JSON.stringify(messages));
@@ -262,7 +306,12 @@ const ChatBot = ({ botName, avatar, botType, initialMessage, systemPrompt, setCr
                             </div>
                         )}
                         <div className="bubble">
-                            <ReactMarkdown>{msg.parts[0].text}</ReactMarkdown>
+                            {msg.parts[0].text.split('\n').map((line, i) => (
+                                <React.Fragment key={i}>
+                                    {line}
+                                    {i < msg.parts[0].text.split('\n').length - 1 && <br />}
+                                </React.Fragment>
+                            ))}
                         </div>
                     </div>
                 ))}
@@ -295,7 +344,7 @@ const ChatBot = ({ botName, avatar, botType, initialMessage, systemPrompt, setCr
                         setSources([]);
                         setVerdict(null);
                     }
-                }} style={{ fontSize: '0.8rem', opacity: 0.7, background: 'none', border: 'none', color: 'inherit', cursor: 'pointer', marginTop: '10px', textDecoration: 'underline' }}>
+                }} className="clear-chat-btn">
                     Effacer la conversation
                 </button>
             </div>

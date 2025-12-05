@@ -1,0 +1,90 @@
+// Global text styles for content sections
+.content-section {
+    p {
+        text-align: justify;
+        font-family: 'Nunito', sans-serif;
+    }
+
+    // Strong text styling: colored AND bold
+    strong {
+        font-weight: 800; // Extra bold for better visibility
+        color: var(--color-primary);
+    }
+
+    // Override for red sections to avoid red-on-red
+    &.section-red strong {
+        color: rgb(255, 255, 255); // Pure black for maximum contrast
+        text-shadow: none;
+    }
+
+    // Remove shadow from all images in sections
+    .image-col img {
+        box-shadow: none !important;
+    }
+
+    ul {
+        margin: 1.5rem 0;
+        padding-left: 2rem;
+
+        li {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            line-height: 1.6;
+            text-align: justify;
+            font-family: 'Nunito', sans-serif;
+        }
+    }
+
+    // Remove shadow from penses image specifically if needed
+    .image-col img.no-shadow {
+        box-shadow: none !important;
+    }
+
+    .linux-logo-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+
+        // Remove shadows and borders from container
+        img {
+            box-shadow: none;
+            border: none;
+        }
+
+        .linux-logo-interactive {
+            width: 100%;
+            max-width: 400px;
+            height: auto;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.8));
+            border-radius: 20px;
+            animation: bounceLogo 1.5s ease-in-out infinite;
+
+            &:hover {
+                transform: scale(1.1) rotate(5deg);
+                filter: drop-shadow(0 30px 60px rgba(255, 68, 68, 0.5)) drop-shadow(0 0 30px rgba(255, 255, 255, 1));
+                animation: none;
+            }
+
+            &:active {
+                transform: scale(1.05) rotate(3deg);
+            }
+        }
+    }
+}
+
+@keyframes bounceLogo {
+
+    0%,
+    100% {
+        transform: translateY(0);
+        animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+    }
+
+    50% {
+        transform: translateY(-20px);
+        animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+    }
+}
