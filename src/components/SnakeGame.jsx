@@ -10,6 +10,8 @@ import microsoftLogo from '../assets/logos/microsoft.png';
 import teslaLogo from '../assets/logos/tesla.png';
 import trumpLogo from '../assets/logos/trump.png';
 import arcadeImage from '../assets/images/arcade.png';
+import iutLogo from '../assets/images/iutlco.jpeg';
+import autocutLogo from '../assets/images/autocut.png';
 
 const GRID_SIZE = 15; // Reduced grid for cleaner gameplay
 const CELL_SIZE = 18; // Cell size
@@ -202,6 +204,28 @@ const SnakeGame = ({ onClose }) => {
 
     return (
         <div className="snake-game-overlay retro" onClick={onClose}>
+            {/* Challenge Info Banner - positioned to the left */}
+            <div className="challenge-info-banner-external">
+                <div style={{ marginBottom: '1.5rem', paddingBottom: '1rem', borderBottom: '1px solid rgba(169, 34, 21, 0.3)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                        <p style={{ fontSize: '0.9rem', margin: 0, color: 'var(--color-primary)', fontWeight: '500' }}>Défi relevé pour l'IUT du Littoral Côte d'Opale</p>
+                        <img src={iutLogo} alt="IUT" style={{ height: '30px', objectFit: 'contain' }} />
+                    </div>
+                    <h3 style={{ fontFamily: 'var(--font-title)', fontSize: '0.85rem', color: 'var(--color-primary)', textTransform: 'uppercase', letterSpacing: '1px', margin: 0, textAlign: 'center' }}>
+                        "On veut du gros pixel !"
+                    </h3>
+                </div>
+                <div>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                        <p style={{ fontSize: '0.9rem', margin: 0, color: 'var(--color-primary)', fontWeight: '500' }}>Défi relevé pour Autocut</p>
+                        <img src={autocutLogo} alt="Autocut" style={{ height: '30px', objectFit: 'contain' }} />
+                    </div>
+                    <h3 style={{ fontFamily: 'var(--font-title)', fontSize: '0.85rem', color: 'var(--color-primary)', textTransform: 'uppercase', letterSpacing: '1px', margin: 0, textAlign: 'center' }}>
+                        "Hidden Snake"
+                    </h3>
+                </div>
+            </div>
+
             <div className="arcade-cabinet" onClick={(e) => e.stopPropagation()}>
                 <img src={arcadeImage} alt="Arcade Cabinet" className="arcade-background" />
 

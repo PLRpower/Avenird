@@ -4,6 +4,8 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import chatbrutiImg from '../assets/images/chatbruti.png';
 import truthbotImg from '../assets/images/truthbot.png';
+import viverisLogo from '../assets/images/viveris.png';
+import ai4goodLogo from '../assets/images/ai4good.png';
 import './ChatbotArena.scss';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -37,6 +39,28 @@ const ChatbotArena = () => {
 
     return (
         <div className="chatbot-arena-container" ref={arenaRef}>
+            {/* Challenge Info Banners */}
+            <div className="challenge-banners-container" style={{ display: 'flex', justifyContent: 'center', gap: '2rem', marginBottom: '2rem', flexWrap: 'wrap' }}>
+                <div className="challenge-banner" style={{ background: 'rgba(0, 0, 0, 0.4)', padding: '1rem 1.5rem', borderRadius: '10px', border: '2px solid var(--color-primary)', maxWidth: '350px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                        <p style={{ fontSize: '0.9rem', margin: 0, color: 'var(--color-primary)', fontWeight: '500' }}>Défi relevé pour Viveris</p>
+                        <img src={viverisLogo} alt="Viveris" style={{ height: '25px', objectFit: 'contain' }} />
+                    </div>
+                    <h3 style={{ fontFamily: 'var(--font-title)', fontSize: '0.85rem', color: 'var(--color-primary)', textTransform: 'uppercase', letterSpacing: '1px', margin: 0, textAlign: 'center' }}>
+                        "Chat'bruti"
+                    </h3>
+                </div>
+                <div className="challenge-banner" style={{ background: 'rgba(0, 0, 0, 0.4)', padding: '1rem 1.5rem', borderRadius: '10px', border: '2px solid var(--color-primary)', maxWidth: '350px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                        <p style={{ fontSize: '0.9rem', margin: 0, color: 'var(--color-primary)', fontWeight: '500' }}>Défi relevé pour AI4Good</p>
+                        <img src={ai4goodLogo} alt="AI4Good" style={{ height: '25px', objectFit: 'contain' }} />
+                    </div>
+                    <h3 style={{ fontFamily: 'var(--font-title)', fontSize: '0.85rem', color: 'var(--color-primary)', textTransform: 'uppercase', letterSpacing: '1px', margin: 0, textAlign: 'center' }}>
+                        "TruthBot"
+                    </h3>
+                </div>
+            </div>
+
             <div className="arena-header">
                 <h2>L'Arène des Bots</h2>
                 <p>Choisissez votre combattant : le Chat'bruti inutile ou le TruthBot éthique.</p>
