@@ -9,7 +9,7 @@ import './ChatbotArena.scss';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const API_KEY = "AIzaSyBgp3IkZqDa7pW1iRxfpMNG9gXaAYjXFYw";
+const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 
 const ChatbotArena = () => {
     const [activeBot, setActiveBot] = useState('chatbruti');

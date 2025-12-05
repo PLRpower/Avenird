@@ -9,11 +9,12 @@ import amazonLogo from '../assets/logos/amazon.png';
 import microsoftLogo from '../assets/logos/microsoft.png';
 import teslaLogo from '../assets/logos/tesla.png';
 import trumpLogo from '../assets/logos/trump.png';
+import arcadeImage from '../assets/images/arcade.png';
 
-const GRID_SIZE = 20; // Reduced to fit on screen
-const CELL_SIZE = 18; // Snake cell size
-const FOOD_SIZE = 26; // Food/logo size (bigger for visibility)
-const INITIAL_SPEED = 120;
+const GRID_SIZE = 15; // Reduced grid for cleaner gameplay
+const CELL_SIZE = 18; // Cell size
+const FOOD_SIZE = 26; // Food/logo size
+const INITIAL_SPEED = 150;
 
 const FOOD_ITEMS = [
     {
@@ -201,88 +202,84 @@ const SnakeGame = ({ onClose }) => {
 
     return (
         <div className="snake-game-overlay retro" onClick={onClose}>
-            <div className="snake-game-container retro" onClick={(e) => e.stopPropagation()}>
-                <div className="game-header retro">
-                    <h2 className="retro-title">🐧 LINUX vs GAFA 🐧</h2>
-                    <div className="game-info">
-                        <span className="score retro-text">SCORE: {score.toString().padStart(4, '0')}</span>
-                        <button className="close-btn retro-btn" onClick={onClose}>✕</button>
+            <div className="arcade-cabinet" onClick={(e) => e.stopPropagation()}>
+                <img src={arcadeImage} alt="Arcade Cabinet" className="arcade-background" />
+
+                {/* Compact game UI positioned on arcade screen */}
+                <div className="arcade-screen-content">
+                    {/* Minimal header */}
+                    <div className="game-header-minimal">
+                        <h2 className="retro-title-small">LINUX vs GAFA</h2>
+                        <span className="score-minimal">SCORE: {score.toString().padStart(4, '0')}</span>
                     </div>
-                </div>
 
-                <div className="game-instructions retro">
-                    {!gameStarted && countdown > 0 ? (
-                        <div className="countdown">
-                            <p className="countdown-number">{countdown}</p>
-                            <p className="countdown-text">GET READY!</p>
-                        </div>
-                    ) : gameOver ? (
-                        <div className="game-over retro">
-                            <p className="retro-text">GAME OVER!</p>
-                            <p className="retro-text">FINAL SCORE: {score}</p>
-                            <button className="retro-btn" onClick={resetGame}>PLAY AGAIN</button>
-                        </div>
-                    ) : isPaused ? (
-                        <p className="retro-text">⏸ PAUSED - PRESS SPACE</p>
-                    ) : (
-                        <p className="retro-text">ARROWS/WASD • SPACE=PAUSE • ESC=QUIT</p>
-                    )}
-                </div>
+                    {/* Game status overlay */}
+                    <div className="game-status-overlay">
+                        {!gameStarted && countdown > 0 ? (
+                            <div className="countdown">
+                                <p className="countdown-number">{countdown}</p>
+                            </div>
+                        ) : gameOver ? (
+                            <div className="game-over retro">
+                                <p className="retro-text">GAME OVER!</p>
+                                <p className="retro-text">SCORE: {score}</p>
+                                <button className="retro-btn" onClick={resetGame}>REPLAY</button>
+                            </div>
+                        ) : isPaused ? (
+                            <p className="retro-text pause-text">⏸ PAUSED</p>
+                        ) : null}
+                    </div>
 
-                <div
-                    className="game-board retro-board"
-                    style={{
-                        width: GRID_SIZE * CELL_SIZE,
-                        height: GRID_SIZE * CELL_SIZE,
-                    }}
-                >
-                    {/* Render snake */}
-                    {snake.map((segment, index) => (
-                        <div
-                            key={index}
-                            className={`snake-segment retro-snake ${index === 0 ? 'head' : ''}`}
-                            style={{
-                                left: segment.x * CELL_SIZE,
-                                top: segment.y * CELL_SIZE,
-                                width: CELL_SIZE,
-                                height: CELL_SIZE,
-                            }}
-                        >
-                            {index === 0 && <span className="penguin-pixel">🐧</span>}
-                        </div>
-                    ))}
-
-                    {/* Render food */}
-                    {food && (
-                        <div
-                            className={`food retro-food ${food.type.className}`}
-                            style={{
-                                left: food.x * CELL_SIZE - (FOOD_SIZE - CELL_SIZE) / 2,
-                                top: food.y * CELL_SIZE - (FOOD_SIZE - CELL_SIZE) / 2,
-                                width: FOOD_SIZE,
-                                height: FOOD_SIZE,
-                            }}
-                            title={food.type.name}
-                        >
-                            <img
-                                src={food.type.image}
-                                alt={food.type.name}
-                                className="logo-image"
-                            />
-                        </div>
-                    )}
-                </div>
-
-                <div className="game-footer retro">
-                    <p className="retro-text">TUX DEVOURS BIG TECH!</p>
-                    <div className="retro-legends">
-                        {FOOD_ITEMS.map((item, idx) => (
-                            <span key={idx} className="legend-item" style={{ color: item.color }}>
-                                {item.name}
-                            </span>
+                    {/* Game board */}
+                    <div className="game-board retro-board">
+                        {/* Render snake */}
+                        {snake.map((segment, index) => (
+                            <div
+                                key={index}
+                                className={`snake-segment retro-snake ${index === 0 ? 'head' : ''}`}
+                                style={{
+                                    left: `${(segment.x / GRID_SIZE) * 100}%`,
+                                    top: `${(segment.y / GRID_SIZE) * 100}%`,
+                                    width: `${(1 / GRID_SIZE) * 100}%`,
+                                    height: `${(1 / GRID_SIZE) * 100}%`,
+                                }}
+                            >
+                                {index === 0 && <span className="penguin-pixel">🐧</span>}
+                            </div>
                         ))}
+
+                        {/* Render food */}
+                        {food && (
+                            <div
+                                className={`food retro-food ${food.type.className}`}
+                                style={{
+                                    left: `${(food.x / GRID_SIZE) * 100}%`,
+                                    top: `${(food.y / GRID_SIZE) * 100}%`,
+                                    width: `${(1.4 / GRID_SIZE) * 100}%`,
+                                    height: `${(1.4 / GRID_SIZE) * 100}%`,
+                                    transform: 'translate(-20%, -20%)',
+                                }}
+                                title={food.type.name}
+                            >
+                                <img
+                                    src={food.type.image}
+                                    alt={food.type.name}
+                                    className="logo-image"
+                                />
+                            </div>
+                        )}
                     </div>
+
+                    {/* Minimal controls hint */}
+                    {gameStarted && !gameOver && !isPaused && (
+                        <div className="controls-hint">
+                            <span>←→↑↓</span> <span>SPC</span> <span>ESC</span>
+                        </div>
+                    )}
                 </div>
+
+                {/* Close button positioned on cabinet */}
+                <button className="close-btn-arcade" onClick={onClose}>✕</button>
             </div>
         </div>
     );
