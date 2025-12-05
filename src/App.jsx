@@ -1,8 +1,9 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Lenis from '@studio-freight/lenis';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import ChatbotArena from './components/ChatbotArena';
+import SnakeGame from './components/SnakeGame';
 import Navigation from './components/Navigation';
 import demarcheImg from './assets/images/demarche.png';
 import pillarsImg from './assets/images/pillars.png';
@@ -12,6 +13,7 @@ import './App.scss';
 gsap.registerPlugin(ScrollTrigger);
 
 function App() {
+  const [showSnake, setShowSnake] = useState(false);
   const containerRef = useRef(null);
   const titleRef = useRef(null);
   const textRef = useRef(null);
@@ -127,6 +129,15 @@ function App() {
       <Navigation />
 
       <div className="content-left">
+        <section className="hero-section">
+          <h1
+            ref={titleRef}
+            onClick={() => setShowSnake(true)}
+            style={{ cursor: 'pointer' }}
+            title="Cliquez pour jouer au Snake !"
+          >
+            AVENIRD
+          </h1>
         <section className="hero-section" id="hero">
           <h1 ref={titleRef}>AVENIRD</h1>
           <p ref={textRef}>
@@ -198,6 +209,15 @@ function App() {
           </div>
         </section>
       </div>
+
+      <div className="sidebar-right">
+        <div className="menu-btn">
+          <span></span>
+        </div>
+        <div className="logo">NIRD 2025</div>
+      </div>
+
+      {showSnake && <SnakeGame onClose={() => setShowSnake(false)} />}
     </div>
   );
 }
