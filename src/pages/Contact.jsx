@@ -5,6 +5,10 @@ import '../App.scss';
 const Contact = () => {
     const [activeSwitch, setActiveSwitch] = useState(null);
     const [unlockedElement, setUnlockedElement] = useState(null);
+    const [statusMessage, setStatusMessage] = useState("EN ATTENTE D'INITIALISATION...");
+    // Dynamic list of switches. Start with 40.
+    const [switches, setSwitches] = useState(Array.from({ length: 40 }, (_, i) => i));
+
     const [formData, setFormData] = useState({
         nom: '',
         prenom: '',
@@ -18,10 +22,7 @@ const Contact = () => {
 
     const containerRef = useRef(null);
     const formRef = useRef(null);
-
-    // Generate switches
-    const switchCount = 40;
-    const switches = Array.from({ length: switchCount }, (_, i) => i);
+    const messageRef = useRef(null);
 
     const fields = [
         { name: 'nom', label: 'Nom' },
@@ -40,17 +41,74 @@ const Contact = () => {
     const handleSwitchChange = (index) => {
         setActiveSwitch(index);
 
-        // Randomly unlock ONE element (field or submit button)
-        const randomTarget = targets[Math.floor(Math.random() * targets.length)];
-        setUnlockedElement(randomTarget);
+        // 1. Dynamic Switch Appearance/Disappearance
+        setSwitches(prevSwitches => {
+            let newSwitches = [...prevSwitches];
 
-        // Random Glitch Effect
-        const colors = ['var(--color-primary)', 'var(--color-text)', '#ff0000', '#ffffff'];
-        const randomColor = colors[Math.floor(Math.random() * colors.length)];
+            // Chance to remove current switch or random others
+            if (Math.random() > 0.7 && newSwitches.length > 10) {
+                // Remove 1 to 3 random switches
+                const toRemove = Math.floor(Math.random() * 3) + 1;
+                for (let i = 0; i < toRemove; i++) {
+                    if (newSwitches.length > 10) {
+                        const removeIdx = Math.floor(Math.random() * newSwitches.length);
+                        newSwitches.splice(removeIdx, 1);
+                    }
+                }
+            }
 
-        // Animate background or border flash
+            // Chance to add new switches
+            if (Math.random() > 0.6 && newSwitches.length < 100) {
+                // Add 1 to 5 new switches
+                const toAdd = Math.floor(Math.random() * 5) + 1;
+                const maxId = Math.max(...newSwitches, 0);
+                for (let i = 1; i <= toAdd; i++) {
+                    newSwitches.push(maxId + i);
+                }
+            }
+
+            // Shuffle slightly for chaos? No, keep order to be less jarring, or sort?
+            // Let's sort them to keep the grid somewhat stable but changing size
+            return newSwitches.sort((a, b) => a - b);
+        });
+
+        // 2. Determine Unlock Status (Success or Fail)
+        // 30% chance to unlock NOTHING
+        const isSuccess = Math.random() > 0.3;
+
+        if (isSuccess) {
+            const randomTarget = targets[Math.floor(Math.random() * targets.length)];
+            setUnlockedElement(randomTarget);
+
+            if (randomTarget === 'submit') {
+                setStatusMessage("⚠️ ALERTE : PROTOCOLE D'ENVOI ACTIVÉ. CONFIRMATION REQUISE.");
+            } else {
+                const fieldLabel = fields.find(f => f.name === randomTarget)?.label;
+                setStatusMessage(`ACCÈS ACCORDÉ : CHAMP [${fieldLabel.toUpperCase()}] DÉVERROUILLÉ.`);
+            }
+
+            // Green flash for success
+            gsap.to(messageRef.current, { color: '#00ff00', duration: 0.2, yoyo: true, repeat: 1, clearProps: 'color' });
+
+        } else {
+            setUnlockedElement(null);
+            const errorMessages = [
+                "ERREUR 404 : CHAMP INTROUVABLE.",
+                "ACCÈS REFUSÉ. TENTATIVE NON AUTORISÉE.",
+                "INTERRUPTEUR DÉFECTUEUX. VEUILLEZ RÉESSAYER.",
+                "CALIBRAGE ÉCHOUÉ. SYSTÈME INSTABLE.",
+                "NON. JUSTE NON.",
+                "ESSAYEZ ENCORE. (OU PAS)."
+            ];
+            setStatusMessage(errorMessages[Math.floor(Math.random() * errorMessages.length)]);
+
+            // Red flash for error
+            gsap.to(messageRef.current, { color: '#ff0000', duration: 0.2, yoyo: true, repeat: 3, clearProps: 'color' });
+        }
+
+        // 3. Visual Glitch Effect (Background)
         gsap.to(containerRef.current, {
-            backgroundColor: Math.random() > 0.7 ? 'var(--color-primary)' : 'var(--color-secondary)',
+            backgroundColor: Math.random() > 0.8 ? '#4a0000' : (Math.random() > 0.8 ? '#00004a' : 'var(--color-secondary)'),
             duration: 0.1,
             yoyo: true,
             repeat: 1,
@@ -59,7 +117,7 @@ const Contact = () => {
             }
         });
 
-        // Shake the form slightly
+        // Shake the form
         gsap.fromTo(formRef.current,
             { x: -5 },
             { x: 5, duration: 0.05, repeat: 3, yoyo: true, clearProps: "x" }
@@ -95,7 +153,7 @@ const Contact = () => {
                     }}>
                         Protocole de Contact
                     </h1>
-                    <p style={{ textAlign: 'center', marginBottom: '3rem', opacity: 0.7 }}>
+                    <p style={{ textAlign: 'center', marginBottom: '2rem', opacity: 0.7 }}>
                         Sécurisation maximale. Veuillez activer le canal approprié pour transmettre vos données.
                     </p>
 
@@ -105,23 +163,49 @@ const Contact = () => {
                         flexWrap: 'wrap',
                         gap: '15px',
                         justifyContent: 'center',
-                        marginBottom: '4rem',
+                        marginBottom: '2rem',
                         padding: '20px',
                         border: '1px solid rgba(255,255,255,0.1)',
                         borderRadius: '10px',
-                        background: 'rgba(0,0,0,0.2)'
+                        background: 'rgba(0,0,0,0.2)',
+                        minHeight: '150px' // Prevent layout jumping too much
                     }}>
-                        {switches.map((index) => (
-                            <div key={index} className="tech-switch">
+                        {switches.map((id) => (
+                            <div key={id} className="tech-switch">
                                 <input
                                     type="checkbox"
-                                    id={`switch-${index}`}
-                                    checked={activeSwitch === index}
-                                    onChange={() => handleSwitchChange(index)}
+                                    id={`switch-${id}`}
+                                    checked={activeSwitch === id}
+                                    onChange={() => handleSwitchChange(id)}
                                 />
-                                <label htmlFor={`switch-${index}`}></label>
+                                <label htmlFor={`switch-${id}`}></label>
                             </div>
                         ))}
+                    </div>
+
+                    {/* Status Message Area */}
+                    <div style={{
+                        textAlign: 'center',
+                        marginBottom: '2rem',
+                        minHeight: '3rem',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                    }}>
+                        <p
+                            ref={messageRef}
+                            style={{
+                                fontFamily: 'monospace',
+                                fontSize: '1.2rem',
+                                padding: '10px 20px',
+                                border: '1px dashed rgba(255,255,255,0.3)',
+                                background: 'rgba(0,0,0,0.3)',
+                                display: 'inline-block',
+                                color: 'var(--color-text)'
+                            }}
+                        >
+                            {statusMessage}
+                        </p>
                     </div>
 
                     {/* Form */}
