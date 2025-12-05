@@ -1,0 +1,40 @@
+// Linux Logo Interactive Styles
+
+.content-section {
+    ul {
+        margin: 1.5rem 0;
+        padding-left: 2rem;
+
+        li {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+    }
+
+    .linux-logo-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+
+        .linux-logo-interactive {
+            width: 100%;
+            max-width: 400px;
+            height: auto;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.3));
+            border-radius: 20px;
+
+            &:hover {
+                transform: scale(1.1) rotate(5deg);
+                filter: drop-shadow(0 30px 60px rgba(255, 68, 68, 0.5)) drop-shadow(0 0 30px rgba(255, 255, 255, 0.3));
+            }
+
+            &:active {
+                transform: scale(1.05) rotate(3deg);
+            }
+        }
+    }
+}
