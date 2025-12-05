@@ -41,6 +41,24 @@ $retro-grid: #1a1a1a;
   }
 }
 
+.challenge-info-banner-external {
+  position: absolute;
+  left: 5%;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.8);
+  padding: 1.5rem;
+  border: 2px solid var(--color-primary);
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(169, 34, 21, 0.5);
+  z-index: 100;
+  max-width: 250px;
+
+  @media (max-width: 1200px) {
+    display: none;
+  }
+}
+
 @keyframes scanlines {
   0% {
     background-position: 0 0;
