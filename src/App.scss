@@ -51,8 +51,20 @@
                 background-clip: text;
                 color: transparent;
 
+                position: relative;
+                /* z-index is inherited from parent (5), which is > sidebar (2) */
+                pointer-events: auto;
+                /* Enable clicks for Snake game Easter egg */
+                cursor: pointer;
+                transition: transform 0.3s ease, filter 0.3s ease;
+
                 opacity: 0;
                 transform: translateY(50px);
+
+                &:hover {
+                    transform: translateY(50px) scale(1.02);
+                    filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.3));
+                }
             }
 
             p {
