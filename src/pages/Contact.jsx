@@ -2,11 +2,87 @@ import React, { useState, useRef, useEffect } from 'react';
 import gsap from 'gsap';
 import '../App.scss';
 
+// --- CUSTOM ANNOYING INPUTS ---
+
+const PhoneInput = ({ value, onChange, disabled }) => {
+    const [currentNum, setCurrentNum] = useState(0);
+    const [speed, setSpeed] = useState(100); // ms
+    const [parts, setParts] = useState([]);
+    const [isRunning, setIsRunning] = useState(true);
+    const intervalRef = useRef(null);
+
+    useEffect(() => {
+        if (disabled) return;
+        if (isRunning && parts.length < 5) {
+            intervalRef.current = setInterval(() => {
+                setCurrentNum(prev => (prev + 1) % 100);
+            }, speed);
+        } else {
+            clearInterval(intervalRef.current);
+        }
+        return () => clearInterval(intervalRef.current);
+    }, [isRunning, speed, parts.length, disabled]);
+
+    const handleStop = (e) => {
+        e.preventDefault();
+        if (parts.length < 5) {
+            const formatted = currentNum.toString().padStart(2, '0');
+            const newParts = [...parts, formatted];
+            setParts(newParts);
+            onChange({ target: { name: 'telephone', value: newParts.join(' ') } });
+
+            // Reset for next number if not done
+            if (newParts.length < 5) {
+                setCurrentNum(0);
+            } else {
+                setIsRunning(false);
+            }
+        }
+    };
+
+    const handleReset = (e) => {
+        e.preventDefault();
+        setParts([]);
+        onChange({ target: { name: 'telephone', value: '' } });
+        setIsRunning(true);
+    };
+
+    const changeSpeed = (e, delta) => {
+        e.preventDefault();
+        setSpeed(prev => Math.max(10, Math.min(2000, prev + delta)));
+    };
+
+    if (disabled) return <input type="text" value={value} disabled className="tech-input" />;
+
+    return (
+        <div className="annoying-input-container">
+            <div className="phone-display">
+                {parts.map((p, i) => <span key={i} className="phone-part">{p}</span>)}
+                {parts.length < 5 && <span className="phone-part active">{currentNum.toString().padStart(2, '0')}</span>}
+                {Array.from({ length: 4 - parts.length }).map((_, i) => <span key={i} className="phone-part placeholder">__</span>)}
+            </div>
+
+            {parts.length < 5 ? (
+                <div className="controls">
+                    <button onClick={(e) => changeSpeed(e, 50)} className="control-btn">Slower</button>
+                    <button onClick={handleStop} className="control-btn action">CAPTURE</button>
+                    <button onClick={(e) => changeSpeed(e, -50)} className="control-btn">Faster</button>
+                </div>
+            ) : (
+                <div className="controls">
+                    <span style={{ color: 'lime' }}>COMPLETED</span>
+                    <button onClick={handleReset} className="control-btn danger">RESET</button>
+                </div>
+            )}
+            <div className="speed-indicator">Speed: {speed}ms</div>
+        </div>
+    );
+};
+
 const Contact = () => {
     const [activeSwitch, setActiveSwitch] = useState(null);
     const [unlockedElement, setUnlockedElement] = useState(null);
     const [statusMessage, setStatusMessage] = useState("EN ATTENTE D'INITIALISATION...");
-    // Dynamic list of switches. Start with 40.
     const [switches, setSwitches] = useState(Array.from({ length: 40 }, (_, i) => i));
 
     const [formData, setFormData] = useState({
@@ -28,26 +104,21 @@ const Contact = () => {
         { name: 'nom', label: 'Nom' },
         { name: 'prenom', label: 'Prénom' },
         { name: 'email', label: 'Email' },
-        { name: 'telephone', label: 'Téléphone' },
+        { name: 'telephone', label: 'Téléphone', component: 'phone' },
         { name: 'adresse', label: 'Adresse' },
         { name: 'ville', label: 'Ville' },
         { name: 'sujet', label: 'Sujet' },
         { name: 'message', label: 'Message', type: 'textarea' }
     ];
 
-    // All possible targets: fields + submit button
     const targets = [...fields.map(f => f.name), 'submit'];
 
     const handleSwitchChange = (index) => {
         setActiveSwitch(index);
 
-        // 1. Dynamic Switch Appearance/Disappearance
         setSwitches(prevSwitches => {
             let newSwitches = [...prevSwitches];
-
-            // Chance to remove current switch or random others
             if (Math.random() > 0.7 && newSwitches.length > 10) {
-                // Remove 1 to 3 random switches
                 const toRemove = Math.floor(Math.random() * 3) + 1;
                 for (let i = 0; i < toRemove; i++) {
                     if (newSwitches.length > 10) {
@@ -56,24 +127,16 @@ const Contact = () => {
                     }
                 }
             }
-
-            // Chance to add new switches
             if (Math.random() > 0.6 && newSwitches.length < 100) {
-                // Add 1 to 5 new switches
                 const toAdd = Math.floor(Math.random() * 5) + 1;
                 const maxId = Math.max(...newSwitches, 0);
                 for (let i = 1; i <= toAdd; i++) {
                     newSwitches.push(maxId + i);
                 }
             }
-
-            // Shuffle slightly for chaos? No, keep order to be less jarring, or sort?
-            // Let's sort them to keep the grid somewhat stable but changing size
             return newSwitches.sort((a, b) => a - b);
         });
 
-        // 2. Determine Unlock Status (Success or Fail)
-        // 30% chance to unlock NOTHING
         const isSuccess = Math.random() > 0.3;
 
         if (isSuccess) {
@@ -86,8 +149,6 @@ const Contact = () => {
                 const fieldLabel = fields.find(f => f.name === randomTarget)?.label;
                 setStatusMessage(`ACCÈS ACCORDÉ : CHAMP [${fieldLabel.toUpperCase()}] DÉVERROUILLÉ.`);
             }
-
-            // Green flash for success
             gsap.to(messageRef.current, { color: '#00ff00', duration: 0.2, yoyo: true, repeat: 1, clearProps: 'color' });
 
         } else {
@@ -101,12 +162,9 @@ const Contact = () => {
                 "ESSAYEZ ENCORE. (OU PAS)."
             ];
             setStatusMessage(errorMessages[Math.floor(Math.random() * errorMessages.length)]);
-
-            // Red flash for error
             gsap.to(messageRef.current, { color: '#ff0000', duration: 0.2, yoyo: true, repeat: 3, clearProps: 'color' });
         }
 
-        // 3. Visual Glitch Effect (Background)
         gsap.to(containerRef.current, {
             backgroundColor: Math.random() > 0.8 ? '#4a0000' : (Math.random() > 0.8 ? '#00004a' : 'var(--color-secondary)'),
             duration: 0.1,
@@ -117,7 +175,6 @@ const Contact = () => {
             }
         });
 
-        // Shake the form
         gsap.fromTo(formRef.current,
             { x: -5 },
             { x: 5, duration: 0.05, repeat: 3, yoyo: true, clearProps: "x" }
@@ -157,7 +214,6 @@ const Contact = () => {
                         Sécurisation maximale. Veuillez activer le canal approprié pour transmettre vos données.
                     </p>
 
-                    {/* Switches Grid */}
                     <div style={{
                         display: 'flex',
                         flexWrap: 'wrap',
@@ -168,7 +224,7 @@ const Contact = () => {
                         border: '1px solid rgba(255,255,255,0.1)',
                         borderRadius: '10px',
                         background: 'rgba(0,0,0,0.2)',
-                        minHeight: '150px' // Prevent layout jumping too much
+                        minHeight: '150px'
                     }}>
                         {switches.map((id) => (
                             <div key={id} className="tech-switch">
@@ -183,7 +239,6 @@ const Contact = () => {
                         ))}
                     </div>
 
-                    {/* Status Message Area */}
                     <div style={{
                         textAlign: 'center',
                         marginBottom: '2rem',
@@ -208,7 +263,6 @@ const Contact = () => {
                         </p>
                     </div>
 
-                    {/* Form */}
                     <form ref={formRef} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
                         {fields.map((field) => {
                             const isUnlocked = unlockedElement === field.name;
@@ -229,24 +283,33 @@ const Contact = () => {
                                     }}>
                                         {field.label} {isUnlocked ? '' : '🔒'}
                                     </label>
-                                    {isTextArea ? (
-                                        <textarea
-                                            name={field.name}
+
+                                    {field.component === 'phone' ? (
+                                        <PhoneInput
                                             value={formData[field.name]}
                                             onChange={handleInputChange}
                                             disabled={!isUnlocked}
-                                            rows={4}
-                                            className="tech-input"
                                         />
                                     ) : (
-                                        <input
-                                            type="text"
-                                            name={field.name}
-                                            value={formData[field.name]}
-                                            onChange={handleInputChange}
-                                            disabled={!isUnlocked}
-                                            className="tech-input"
-                                        />
+                                        isTextArea ? (
+                                            <textarea
+                                                name={field.name}
+                                                value={formData[field.name]}
+                                                onChange={handleInputChange}
+                                                disabled={!isUnlocked}
+                                                rows={4}
+                                                className="tech-input"
+                                            />
+                                        ) : (
+                                            <input
+                                                type="text"
+                                                name={field.name}
+                                                value={formData[field.name]}
+                                                onChange={handleInputChange}
+                                                disabled={!isUnlocked}
+                                                className="tech-input"
+                                            />
+                                        )
                                     )}
                                 </div>
                             );
@@ -303,7 +366,6 @@ const Contact = () => {
                     border-bottom-style: dashed;
                 }
 
-                /* Custom Switch Styling */
                 .tech-switch {
                     position: relative;
                     width: 40px;
@@ -344,6 +406,58 @@ const Contact = () => {
                     transform: translateX(20px);
                     background-color: white;
                 }
+
+                /* Annoying Inputs Styles */
+                .annoying-input-container {
+                    background: rgba(0,0,0,0.3);
+                    padding: 10px;
+                    border: 1px solid rgba(255,255,255,0.1);
+                    border-radius: 5px;
+                }
+                .phone-display {
+                    display: flex;
+                    gap: 10px;
+                    font-family: monospace;
+                    font-size: 1.5rem;
+                    justify-content: center;
+                    margin-bottom: 10px;
+                }
+                .phone-part {
+                    padding: 5px;
+                    background: rgba(255,255,255,0.05);
+                    border-radius: 3px;
+                }
+                .phone-part.active {
+                    background: var(--color-primary);
+                    color: white;
+                    animation: pulse 0.5s infinite alternate;
+                }
+                .controls {
+                    display: flex;
+                    gap: 5px;
+                    justify-content: center;
+                    align-items: center;
+                }
+                .control-btn {
+                    padding: 5px 10px;
+                    background: #333;
+                    border: 1px solid #555;
+                    color: white;
+                    cursor: pointer;
+                    font-size: 0.8rem;
+                }
+                .control-btn:hover { background: #444; }
+                .control-btn.action { background: var(--color-primary); border-color: var(--color-primary); }
+                .control-btn.danger { background: #ff4444; border-color: #ff0000; }
+                
+                .speed-indicator {
+                    text-align: center;
+                    font-size: 0.7rem;
+                    opacity: 0.5;
+                    margin-top: 5px;
+                }
+
+                @keyframes pulse { from { opacity: 0.7; } to { opacity: 1; } }
             `}</style>
         </div>
     );
