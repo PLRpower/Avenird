@@ -6,7 +6,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import ChatbotArena from '../components/ChatbotArena';
 import SnakeGame from '../components/SnakeGame';
 import demarcheImg from '../assets/images/demarche.png';
-import pillarsImg from '../assets/images/pillars.png';
+
 import joinImg from '../assets/images/join.png';
 import linuxLogo from '../assets/images/linux.png';
 import pensesImg from '../assets/images/img_tu_penses.png';
@@ -198,7 +198,11 @@ function Home() {
                 <section className="content-section section-light" id="piliers">
                     <div className="section-content-wrapper reverse">
                         <div className="image-col">
-                            <img src={pillarsImg} alt="NIRD" />
+                            <img
+                                src="https://img.linuxfr.org/img/68747470733a2f2f6e6972642e666f7267652e617070732e656475636174696f6e2e66722f696d672f6c6f676f2b7465787432303670782e706e67/logo+text206px.png"
+                                alt="NIRD"
+                                style={{ filter: 'grayscale(100%) opacity(0.7)' }}
+                            />
                         </div>
                         <div className="text-col">
                             <h2>NIRD : Un Organisme au Service de l'Autonomie Numérique</h2>
