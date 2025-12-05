@@ -205,6 +205,11 @@ const Contact = () => {
     const formRef = useRef(null);
     const messageRef = useRef(null);
 
+    // Scroll to top when component mounts
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
+
     const fields = [
         { name: 'nom', label: 'Nom' },
         { name: 'prenom', label: 'Prénom' },
