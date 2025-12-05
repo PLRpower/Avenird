@@ -138,6 +138,8 @@ function App() {
           >
             AVENIRD
           </h1>
+        <section className="hero-section" id="hero">
+          <h1 ref={titleRef}>AVENIRD</h1>
           <p ref={textRef}>
             Le Village Numérique Résistant. <br />
             Comment les établissements scolaires peuvent tenir tête aux Big Tech ?
