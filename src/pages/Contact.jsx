@@ -217,6 +217,14 @@ const Contact = () => {
 
     const targets = [...fields.map(f => f.name), 'submit'];
 
+    // Dependency Chain: Sujet -> Ville -> Email -> Prenom -> Nom
+    const dependencies = {
+        'ville': 'sujet',
+        'email': 'ville',
+        'prenom': 'email',
+        'nom': 'prenom'
+    };
+
     const handleSwitchChange = (index) => {
         if (isSubmitted) return;
         setActiveSwitch(index);
@@ -246,15 +254,27 @@ const Contact = () => {
 
         if (isSuccess) {
             const randomTarget = targets[Math.floor(Math.random() * targets.length)];
-            setUnlockedElement(randomTarget);
 
-            if (randomTarget === 'submit') {
-                setStatusMessage("⚠️ ALERTE : PROTOCOLE D'ENVOI ACTIVÉ. CONFIRMATION REQUISE.");
+            // Check Dependencies
+            const dependency = dependencies[randomTarget];
+            if (dependency && !formData[dependency]) {
+                // Dependency not met
+                setUnlockedElement(null);
+                const depLabel = fields.find(f => f.name === dependency)?.label || dependency;
+                setStatusMessage(`ACCÈS REFUSÉ. PRÉREQUIS MANQUANT : ${depLabel.toUpperCase()}.`);
+                gsap.to(messageRef.current, { color: '#ff0000', duration: 0.2, yoyo: true, repeat: 3, clearProps: 'color' });
             } else {
-                const fieldLabel = fields.find(f => f.name === randomTarget)?.label;
-                setStatusMessage(`ACCÈS ACCORDÉ : CHAMP [${fieldLabel.toUpperCase()}] DÉVERROUILLÉ.`);
+                // Success
+                setUnlockedElement(randomTarget);
+
+                if (randomTarget === 'submit') {
+                    setStatusMessage("⚠️ ALERTE : PROTOCOLE D'ENVOI ACTIVÉ. CONFIRMATION REQUISE.");
+                } else {
+                    const fieldLabel = fields.find(f => f.name === randomTarget)?.label;
+                    setStatusMessage(`ACCÈS ACCORDÉ : CHAMP [${fieldLabel.toUpperCase()}] DÉVERROUILLÉ.`);
+                }
+                gsap.to(messageRef.current, { color: '#00ff00', duration: 0.2, yoyo: true, repeat: 1, clearProps: 'color' });
             }
-            gsap.to(messageRef.current, { color: '#00ff00', duration: 0.2, yoyo: true, repeat: 1, clearProps: 'color' });
 
         } else {
             setUnlockedElement(null);
