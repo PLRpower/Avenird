@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import gsap from 'gsap';
 import './Navigation.scss';
 
@@ -6,6 +7,8 @@ const Navigation = () => {
     const [isOpen, setIsOpen] = useState(false);
     const menuRef = useRef(null);
     const linksRef = useRef([]);
+    const navigate = useNavigate();
+    const location = useLocation();
 
     // Reset refs on render to avoid duplicates
     linksRef.current = [];
@@ -32,9 +35,19 @@ const Navigation = () => {
 
     const handleLinkClick = (id) => {
         setIsOpen(false);
-        const element = document.getElementById(id);
-        if (element) {
-            element.scrollIntoView({ behavior: 'smooth' });
+
+        if (id === 'contact') {
+            navigate('/contact');
+            return;
+        }
+
+        if (location.pathname !== '/') {
+            navigate('/', { state: { scrollTo: id } });
+        } else {
+            const element = document.getElementById(id);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth' });
+            }
         }
     };
 
@@ -52,6 +65,7 @@ const Navigation = () => {
                     <a onClick={() => handleLinkClick('piliers')} ref={addToRefs}>Les Piliers</a>
                     <a onClick={() => handleLinkClick('chatbot')} ref={addToRefs}>L'Arène</a>
                     <a onClick={() => handleLinkClick('rejoindre')} ref={addToRefs}>Rejoindre</a>
+                    <a onClick={() => handleLinkClick('contact')} ref={addToRefs}>Formulaire de contact</a>
                 </nav>
                 <div className="nav-footer">
                     <p>Avenird © 2025</p>
