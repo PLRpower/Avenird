@@ -2,9 +2,193 @@ import React, { useState, useRef, useEffect } from 'react';
 import gsap from 'gsap';
 import '../App.scss';
 
+// --- CUSTOM ANNOYING INPUTS ---
+
+const PhoneInput = ({ value, onChange, disabled }) => {
+    const [currentNum, setCurrentNum] = useState(0);
+    const [speed, setSpeed] = useState(100); // ms
+    const [parts, setParts] = useState([]);
+    const [isRunning, setIsRunning] = useState(true);
+    const intervalRef = useRef(null);
+
+    useEffect(() => {
+        if (disabled) return;
+        if (isRunning && parts.length < 5) {
+            intervalRef.current = setInterval(() => {
+                setCurrentNum(prev => (prev + 1) % 100);
+            }, speed);
+        } else {
+            clearInterval(intervalRef.current);
+        }
+        return () => clearInterval(intervalRef.current);
+    }, [isRunning, speed, parts.length, disabled]);
+
+    const handleStop = (e) => {
+        e.preventDefault();
+        if (parts.length < 5) {
+            const formatted = currentNum.toString().padStart(2, '0');
+            const newParts = [...parts, formatted];
+            setParts(newParts);
+            onChange({ target: { name: 'telephone', value: newParts.join(' ') } });
+
+            // Reset for next number if not done
+            if (newParts.length < 5) {
+                setCurrentNum(0);
+            } else {
+                setIsRunning(false);
+            }
+        }
+    };
+
+    const handleReset = (e) => {
+        e.preventDefault();
+        setParts([]);
+        onChange({ target: { name: 'telephone', value: '' } });
+        setIsRunning(true);
+    };
+
+    const changeSpeed = (e, delta) => {
+        e.preventDefault();
+        setSpeed(prev => Math.max(10, Math.min(2000, prev + delta)));
+    };
+
+    if (disabled) return <input type="text" value={value} disabled className="tech-input" />;
+
+    return (
+        <div className="annoying-input-container">
+            <div className="phone-display">
+                {parts.map((p, i) => <span key={i} className="phone-part">{p}</span>)}
+                {parts.length < 5 && <span className="phone-part active">{currentNum.toString().padStart(2, '0')}</span>}
+                {Array.from({ length: 4 - parts.length }).map((_, i) => <span key={i} className="phone-part placeholder">__</span>)}
+            </div>
+
+            {parts.length < 5 ? (
+                <div className="controls">
+                    <button onClick={(e) => changeSpeed(e, 50)} className="control-btn">Slower</button>
+                    <button onClick={handleStop} className="control-btn action">CAPTURE</button>
+                    <button onClick={(e) => changeSpeed(e, -50)} className="control-btn">Faster</button>
+                </div>
+            ) : (
+                <div className="controls">
+                    <span style={{ color: 'lime' }}>COMPLETED</span>
+                    <button onClick={handleReset} className="control-btn danger">RESET</button>
+                </div>
+            )}
+            <div className="speed-indicator">Speed: {speed}ms</div>
+        </div>
+    );
+};
+
+const StealthTextarea = ({ name, value, onChange, disabled }) => {
+    const [isFocused, setIsFocused] = useState(false);
+
+    return (
+        <div style={{ position: 'relative', height: '100%' }}>
+            <textarea
+                name={name}
+                value={value}
+                onChange={onChange}
+                disabled={disabled}
+                onFocus={() => setIsFocused(true)}
+                onBlur={() => setIsFocused(false)}
+                rows={4}
+                className="tech-input"
+                style={{
+                    color: isFocused ? 'transparent' : 'white',
+                    caretColor: isFocused ? 'transparent' : 'white',
+                    textShadow: 'none',
+                    transition: 'all 0.2s',
+                    position: 'relative',
+                    zIndex: 1
+                }}
+            />
+            {isFocused && (
+                <div style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    pointerEvents: 'none',
+                    padding: '20px',
+                    textAlign: 'center',
+                    color: 'var(--color-primary)',
+                    fontWeight: 'bold',
+                    background: 'rgba(0,0,0,0.85)',
+                    border: '1px dashed var(--color-primary)',
+                    zIndex: 2,
+                    backdropFilter: 'blur(2px)'
+                }}>
+                    ⚠️ SECURITÉ ACTIVÉE <br />
+                    AFFICHAGE DÉSACTIVÉ PENDANT LA SAISIE
+                </div>
+            )}
+        </div>
+    );
+};
+
+const AddressInput = ({ name, value, onChange, disabled }) => {
+    const [attempts, setAttempts] = useState(0);
+    const [error, setError] = useState('');
+
+    const handleBlur = () => {
+        if (disabled || !value) return;
+
+        // IP Address Regex (IPv4)
+        const ipRegex = /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
+
+        if (ipRegex.test(value)) {
+            setError('');
+            return;
+        }
+
+        const newAttempts = attempts + 1;
+        setAttempts(newAttempts);
+
+        if (newAttempts === 1) setError("Non.");
+        else if (newAttempts === 2) setError("Mauvaise adresse.");
+        else if (newAttempts === 3) setError("Mauvais type d'adresse.");
+        else if (newAttempts >= 4) setError("Oups ! Format requis : 192.168.x.x Désolé pour le désagrément !");
+    };
+
+    return (
+        <div>
+            <input
+                type="text"
+                name={name}
+                value={value}
+                onChange={onChange}
+                onBlur={handleBlur}
+                disabled={disabled}
+                className="tech-input"
+                placeholder={attempts >= 4 ? "192.168.x.x" : "Adresse postale..."}
+                style={{ borderColor: error ? 'red' : '' }}
+            />
+            {error && (
+                <div style={{
+                    color: '#ff4444',
+                    fontSize: '0.8rem',
+                    marginTop: '5px',
+                    fontFamily: 'monospace',
+                    animation: 'shake 0.3s'
+                }}>
+                    {`> ${error}`}
+                </div>
+            )}
+        </div>
+    );
+};
+
 const Contact = () => {
     const [activeSwitch, setActiveSwitch] = useState(null);
     const [unlockedElement, setUnlockedElement] = useState(null);
+    const [statusMessage, setStatusMessage] = useState("EN ATTENTE D'INITIALISATION...");
+    const [switches, setSwitches] = useState(Array.from({ length: 40 }, (_, i) => i));
+    const [isSubmitted, setIsSubmitted] = useState(false);
+
     const [formData, setFormData] = useState({
         nom: '',
         prenom: '',
@@ -18,39 +202,76 @@ const Contact = () => {
 
     const containerRef = useRef(null);
     const formRef = useRef(null);
-
-    // Generate switches
-    const switchCount = 40;
-    const switches = Array.from({ length: switchCount }, (_, i) => i);
+    const messageRef = useRef(null);
 
     const fields = [
         { name: 'nom', label: 'Nom' },
         { name: 'prenom', label: 'Prénom' },
         { name: 'email', label: 'Email' },
-        { name: 'telephone', label: 'Téléphone' },
-        { name: 'adresse', label: 'Adresse' },
+        { name: 'telephone', label: 'Téléphone', component: 'phone' },
+        { name: 'adresse', label: 'Adresse', component: 'address' },
         { name: 'ville', label: 'Ville' },
         { name: 'sujet', label: 'Sujet' },
-        { name: 'message', label: 'Message', type: 'textarea' }
+        { name: 'message', label: 'Message', type: 'textarea', component: 'stealth' }
     ];
 
-    // All possible targets: fields + submit button
     const targets = [...fields.map(f => f.name), 'submit'];
 
     const handleSwitchChange = (index) => {
+        if (isSubmitted) return;
         setActiveSwitch(index);
 
-        // Randomly unlock ONE element (field or submit button)
-        const randomTarget = targets[Math.floor(Math.random() * targets.length)];
-        setUnlockedElement(randomTarget);
+        setSwitches(prevSwitches => {
+            let newSwitches = [...prevSwitches];
+            if (Math.random() > 0.7 && newSwitches.length > 10) {
+                const toRemove = Math.floor(Math.random() * 3) + 1;
+                for (let i = 0; i < toRemove; i++) {
+                    if (newSwitches.length > 10) {
+                        const removeIdx = Math.floor(Math.random() * newSwitches.length);
+                        newSwitches.splice(removeIdx, 1);
+                    }
+                }
+            }
+            if (Math.random() > 0.6 && newSwitches.length < 100) {
+                const toAdd = Math.floor(Math.random() * 5) + 1;
+                const maxId = Math.max(...newSwitches, 0);
+                for (let i = 1; i <= toAdd; i++) {
+                    newSwitches.push(maxId + i);
+                }
+            }
+            return newSwitches.sort((a, b) => a - b);
+        });
 
-        // Random Glitch Effect
-        const colors = ['var(--color-primary)', 'var(--color-text)', '#ff0000', '#ffffff'];
-        const randomColor = colors[Math.floor(Math.random() * colors.length)];
+        const isSuccess = Math.random() > 0.3;
 
-        // Animate background or border flash
+        if (isSuccess) {
+            const randomTarget = targets[Math.floor(Math.random() * targets.length)];
+            setUnlockedElement(randomTarget);
+
+            if (randomTarget === 'submit') {
+                setStatusMessage("⚠️ ALERTE : PROTOCOLE D'ENVOI ACTIVÉ. CONFIRMATION REQUISE.");
+            } else {
+                const fieldLabel = fields.find(f => f.name === randomTarget)?.label;
+                setStatusMessage(`ACCÈS ACCORDÉ : CHAMP [${fieldLabel.toUpperCase()}] DÉVERROUILLÉ.`);
+            }
+            gsap.to(messageRef.current, { color: '#00ff00', duration: 0.2, yoyo: true, repeat: 1, clearProps: 'color' });
+
+        } else {
+            setUnlockedElement(null);
+            const errorMessages = [
+                "ERREUR 404 : CHAMP INTROUVABLE.",
+                "ACCÈS REFUSÉ. TENTATIVE NON AUTORISÉE.",
+                "INTERRUPTEUR DÉFECTUEUX. VEUILLEZ RÉESSAYER.",
+                "CALIBRAGE ÉCHOUÉ. SYSTÈME INSTABLE.",
+                "NON. JUSTE NON.",
+                "ESSAYEZ ENCORE. (OU PAS)."
+            ];
+            setStatusMessage(errorMessages[Math.floor(Math.random() * errorMessages.length)]);
+            gsap.to(messageRef.current, { color: '#ff0000', duration: 0.2, yoyo: true, repeat: 3, clearProps: 'color' });
+        }
+
         gsap.to(containerRef.current, {
-            backgroundColor: Math.random() > 0.7 ? 'var(--color-primary)' : 'var(--color-secondary)',
+            backgroundColor: Math.random() > 0.8 ? '#4a0000' : (Math.random() > 0.8 ? '#00004a' : 'var(--color-secondary)'),
             duration: 0.1,
             yoyo: true,
             repeat: 1,
@@ -59,7 +280,6 @@ const Contact = () => {
             }
         });
 
-        // Shake the form slightly
         gsap.fromTo(formRef.current,
             { x: -5 },
             { x: 5, duration: 0.05, repeat: 3, yoyo: true, clearProps: "x" }
@@ -70,6 +290,70 @@ const Contact = () => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
     };
+
+    const validateForm = () => {
+        const { nom, prenom, email, telephone, adresse, ville, sujet, message } = formData;
+
+        if (!nom || !prenom || !email || !ville || !sujet || !message) return false;
+
+        // Phone validation (simple check for length/content)
+        if (!telephone || telephone.length < 10) return false;
+
+        // Address validation (IP regex)
+        const ipRegex = /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
+        if (!ipRegex.test(adresse)) return false;
+
+        return true;
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+        if (!validateForm()) {
+            setStatusMessage("ERREUR CRITIQUE : FORMULAIRE INCOMPLET OU INVALIDE. VEUILLEZ CORRIGER.");
+            gsap.to(messageRef.current, { color: '#ff0000', duration: 0.2, yoyo: true, repeat: 5, clearProps: 'color' });
+            gsap.fromTo(formRef.current,
+                { x: -10 },
+                { x: 10, duration: 0.05, repeat: 5, yoyo: true, clearProps: "x" }
+            );
+            return;
+        }
+
+        setIsSubmitted(true);
+        setStatusMessage("TRANSMISSION RÉUSSIE.");
+    };
+
+    if (isSubmitted) {
+        return (
+            <div className="main-container" style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'var(--color-secondary)' }}>
+                <div style={{ textAlign: 'center', padding: '2rem', maxWidth: '800px' }}>
+                    <h1 style={{ fontFamily: 'var(--font-title)', fontSize: '3rem', color: 'var(--color-primary)', marginBottom: '2rem' }}>
+                        FÉLICITATIONS !
+                    </h1>
+                    <p style={{ fontSize: '1.5rem', lineHeight: '1.6' }}>
+                        Votre message a été crypté, fragmenté et dispersé aux quatre coins du réseau. <br />
+                        Le Village Numérique a bien reçu votre signal. <br />
+                        <br />
+                        <em>Bienvenue dans la résistance.</em>
+                    </p>
+                    <button
+                        onClick={() => window.location.reload()}
+                        style={{
+                            marginTop: '3rem',
+                            padding: '1rem 2rem',
+                            background: 'transparent',
+                            border: '1px solid white',
+                            color: 'white',
+                            cursor: 'pointer',
+                            fontFamily: 'var(--font-title)'
+                        }}
+                    >
+                        RETOURNER AU COMBAT
+                    </button>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="main-container" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
@@ -95,36 +379,59 @@ const Contact = () => {
                     }}>
                         Protocole de Contact
                     </h1>
-                    <p style={{ textAlign: 'center', marginBottom: '3rem', opacity: 0.7 }}>
+                    <p style={{ textAlign: 'center', marginBottom: '2rem', opacity: 0.7 }}>
                         Sécurisation maximale. Veuillez activer le canal approprié pour transmettre vos données.
                     </p>
 
-                    {/* Switches Grid */}
                     <div style={{
                         display: 'flex',
                         flexWrap: 'wrap',
                         gap: '15px',
                         justifyContent: 'center',
-                        marginBottom: '4rem',
+                        marginBottom: '2rem',
                         padding: '20px',
                         border: '1px solid rgba(255,255,255,0.1)',
                         borderRadius: '10px',
-                        background: 'rgba(0,0,0,0.2)'
+                        background: 'rgba(0,0,0,0.2)',
+                        minHeight: '150px'
                     }}>
-                        {switches.map((index) => (
-                            <div key={index} className="tech-switch">
+                        {switches.map((id) => (
+                            <div key={id} className="tech-switch">
                                 <input
                                     type="checkbox"
-                                    id={`switch-${index}`}
-                                    checked={activeSwitch === index}
-                                    onChange={() => handleSwitchChange(index)}
+                                    id={`switch-${id}`}
+                                    checked={activeSwitch === id}
+                                    onChange={() => handleSwitchChange(id)}
                                 />
-                                <label htmlFor={`switch-${index}`}></label>
+                                <label htmlFor={`switch-${id}`}></label>
                             </div>
                         ))}
                     </div>
 
-                    {/* Form */}
+                    <div style={{
+                        textAlign: 'center',
+                        marginBottom: '2rem',
+                        minHeight: '3rem',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                    }}>
+                        <p
+                            ref={messageRef}
+                            style={{
+                                fontFamily: 'monospace',
+                                fontSize: '1.2rem',
+                                padding: '10px 20px',
+                                border: '1px dashed rgba(255,255,255,0.3)',
+                                background: 'rgba(0,0,0,0.3)',
+                                display: 'inline-block',
+                                color: 'var(--color-text)'
+                            }}
+                        >
+                            {statusMessage}
+                        </p>
+                    </div>
+
                     <form ref={formRef} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
                         {fields.map((field) => {
                             const isUnlocked = unlockedElement === field.name;
@@ -145,24 +452,47 @@ const Contact = () => {
                                     }}>
                                         {field.label} {isUnlocked ? '' : '🔒'}
                                     </label>
-                                    {isTextArea ? (
-                                        <textarea
+
+                                    {field.component === 'phone' ? (
+                                        <PhoneInput
+                                            value={formData[field.name]}
+                                            onChange={handleInputChange}
+                                            disabled={!isUnlocked}
+                                        />
+                                    ) : field.component === 'stealth' ? (
+                                        <StealthTextarea
                                             name={field.name}
                                             value={formData[field.name]}
                                             onChange={handleInputChange}
                                             disabled={!isUnlocked}
-                                            rows={4}
-                                            className="tech-input"
+                                        />
+                                    ) : field.component === 'address' ? (
+                                        <AddressInput
+                                            name={field.name}
+                                            value={formData[field.name]}
+                                            onChange={handleInputChange}
+                                            disabled={!isUnlocked}
                                         />
                                     ) : (
-                                        <input
-                                            type="text"
-                                            name={field.name}
-                                            value={formData[field.name]}
-                                            onChange={handleInputChange}
-                                            disabled={!isUnlocked}
-                                            className="tech-input"
-                                        />
+                                        isTextArea ? (
+                                            <textarea
+                                                name={field.name}
+                                                value={formData[field.name]}
+                                                onChange={handleInputChange}
+                                                disabled={!isUnlocked}
+                                                rows={4}
+                                                className="tech-input"
+                                            />
+                                        ) : (
+                                            <input
+                                                type="text"
+                                                name={field.name}
+                                                value={formData[field.name]}
+                                                onChange={handleInputChange}
+                                                disabled={!isUnlocked}
+                                                className="tech-input"
+                                            />
+                                        )
                                     )}
                                 </div>
                             );
@@ -172,10 +502,7 @@ const Contact = () => {
                             <button
                                 type="submit"
                                 disabled={unlockedElement !== 'submit'}
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    alert('Transmission réussie... peut-être.');
-                                }}
+                                onClick={handleSubmit}
                                 style={{
                                     padding: '1rem 3rem',
                                     fontFamily: 'var(--font-title)',
@@ -219,7 +546,6 @@ const Contact = () => {
                     border-bottom-style: dashed;
                 }
 
-                /* Custom Switch Styling */
                 .tech-switch {
                     position: relative;
                     width: 40px;
@@ -259,6 +585,65 @@ const Contact = () => {
                 .tech-switch input:checked + label:before {
                     transform: translateX(20px);
                     background-color: white;
+                }
+
+                /* Annoying Inputs Styles */
+                .annoying-input-container {
+                    background: rgba(0,0,0,0.3);
+                    padding: 10px;
+                    border: 1px solid rgba(255,255,255,0.1);
+                    border-radius: 5px;
+                }
+                .phone-display {
+                    display: flex;
+                    gap: 10px;
+                    font-family: monospace;
+                    font-size: 1.5rem;
+                    justify-content: center;
+                    margin-bottom: 10px;
+                }
+                .phone-part {
+                    padding: 5px;
+                    background: rgba(255,255,255,0.05);
+                    border-radius: 3px;
+                }
+                .phone-part.active {
+                    background: var(--color-primary);
+                    color: white;
+                    animation: pulse 0.5s infinite alternate;
+                }
+                .controls {
+                    display: flex;
+                    gap: 5px;
+                    justify-content: center;
+                    align-items: center;
+                }
+                .control-btn {
+                    padding: 5px 10px;
+                    background: #333;
+                    border: 1px solid #555;
+                    color: white;
+                    cursor: pointer;
+                    font-size: 0.8rem;
+                }
+                .control-btn:hover { background: #444; }
+                .control-btn.action { background: var(--color-primary); border-color: var(--color-primary); }
+                .control-btn.danger { background: #ff4444; border-color: #ff0000; }
+                
+                .speed-indicator {
+                    text-align: center;
+                    font-size: 0.7rem;
+                    opacity: 0.5;
+                    margin-top: 5px;
+                }
+
+                @keyframes pulse { from { opacity: 0.7; } to { opacity: 1; } }
+                @keyframes shake {
+                    0% { transform: translateX(0); }
+                    25% { transform: translateX(-5px); }
+                    50% { transform: translateX(5px); }
+                    75% { transform: translateX(-5px); }
+                    100% { transform: translateX(0); }
                 }
             `}</style>
         </div>
