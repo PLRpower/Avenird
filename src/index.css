@@ -5,6 +5,8 @@
   font-style: normal;
 }
 
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap');
+
 :root {
   --color-primary: #a92215;
   --color-secondary: #2d2727;
@@ -14,7 +16,7 @@
 
   --font-title: 'Cy Grotesk Wide', 'Unbounded', sans-serif;
   /* Utilise la police custom en priorité */
-  --font-text: 'Poppins', sans-serif;
+  --font-text: 'Nunito', sans-serif;
 }
 
 * {

@@ -1,6 +1,21 @@
-// Linux Logo Interactive Styles
-
+// Global text styles for content sections
 .content-section {
+    p {
+        text-align: justify;
+        font-family: 'Nunito', sans-serif;
+    }
+
+    // Strong text styling: colored AND bold
+    strong {
+        font-weight: 800; // Extra bold for better visibility
+        color: var(--color-primary);
+    }
+
+    // Override for red sections to avoid red-on-red
+    &.section-red strong {
+        color: rgb(255, 255, 255); // Pure black for maximum contrast
+        text-shadow: none;
+    }
 
     // Remove shadow from all images in sections
     .image-col img {
@@ -15,7 +30,14 @@
             font-size: 1.2rem;
             margin-bottom: 1rem;
             line-height: 1.6;
+            text-align: justify;
+            font-family: 'Nunito', sans-serif;
         }
+    }
+
+    // Remove shadow from penses image specifically if needed
+    .image-col img.no-shadow {
+        box-shadow: none !important;
     }
 
     .linux-logo-container {
