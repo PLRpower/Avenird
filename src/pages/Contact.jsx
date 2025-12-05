@@ -130,11 +130,64 @@ const StealthTextarea = ({ name, value, onChange, disabled }) => {
     );
 };
 
+const AddressInput = ({ name, value, onChange, disabled }) => {
+    const [attempts, setAttempts] = useState(0);
+    const [error, setError] = useState('');
+
+    const handleBlur = () => {
+        if (disabled || !value) return;
+
+        // IP Address Regex (IPv4)
+        const ipRegex = /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
+
+        if (ipRegex.test(value)) {
+            setError('');
+            return;
+        }
+
+        const newAttempts = attempts + 1;
+        setAttempts(newAttempts);
+
+        if (newAttempts === 1) setError("Non.");
+        else if (newAttempts === 2) setError("Mauvaise adresse.");
+        else if (newAttempts === 3) setError("Mauvais type d'adresse.");
+        else if (newAttempts >= 4) setError("Format requis : 192.168.x.x");
+    };
+
+    return (
+        <div>
+            <input
+                type="text"
+                name={name}
+                value={value}
+                onChange={onChange}
+                onBlur={handleBlur}
+                disabled={disabled}
+                className="tech-input"
+                placeholder={attempts >= 4 ? "192.168.x.x" : "Adresse postale..."}
+                style={{ borderColor: error ? 'red' : '' }}
+            />
+            {error && (
+                <div style={{
+                    color: '#ff4444',
+                    fontSize: '0.8rem',
+                    marginTop: '5px',
+                    fontFamily: 'monospace',
+                    animation: 'shake 0.3s'
+                }}>
+                    {`> ${error}`}
+                </div>
+            )}
+        </div>
+    );
+};
+
 const Contact = () => {
     const [activeSwitch, setActiveSwitch] = useState(null);
     const [unlockedElement, setUnlockedElement] = useState(null);
     const [statusMessage, setStatusMessage] = useState("EN ATTENTE D'INITIALISATION...");
     const [switches, setSwitches] = useState(Array.from({ length: 40 }, (_, i) => i));
+    const [isSubmitted, setIsSubmitted] = useState(false);
 
     const [formData, setFormData] = useState({
         nom: '',
@@ -156,7 +209,7 @@ const Contact = () => {
         { name: 'prenom', label: 'Prénom' },
         { name: 'email', label: 'Email' },
         { name: 'telephone', label: 'Téléphone', component: 'phone' },
-        { name: 'adresse', label: 'Adresse' },
+        { name: 'adresse', label: 'Adresse', component: 'address' },
         { name: 'ville', label: 'Ville' },
         { name: 'sujet', label: 'Sujet' },
         { name: 'message', label: 'Message', type: 'textarea', component: 'stealth' }
@@ -165,6 +218,7 @@ const Contact = () => {
     const targets = [...fields.map(f => f.name), 'submit'];
 
     const handleSwitchChange = (index) => {
+        if (isSubmitted) return;
         setActiveSwitch(index);
 
         setSwitches(prevSwitches => {
@@ -236,6 +290,70 @@ const Contact = () => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
     };
+
+    const validateForm = () => {
+        const { nom, prenom, email, telephone, adresse, ville, sujet, message } = formData;
+
+        if (!nom || !prenom || !email || !ville || !sujet || !message) return false;
+
+        // Phone validation (simple check for length/content)
+        if (!telephone || telephone.length < 10) return false;
+
+        // Address validation (IP regex)
+        const ipRegex = /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
+        if (!ipRegex.test(adresse)) return false;
+
+        return true;
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+        if (!validateForm()) {
+            setStatusMessage("ERREUR CRITIQUE : FORMULAIRE INCOMPLET OU INVALIDE. VEUILLEZ CORRIGER.");
+            gsap.to(messageRef.current, { color: '#ff0000', duration: 0.2, yoyo: true, repeat: 5, clearProps: 'color' });
+            gsap.fromTo(formRef.current,
+                { x: -10 },
+                { x: 10, duration: 0.05, repeat: 5, yoyo: true, clearProps: "x" }
+            );
+            return;
+        }
+
+        setIsSubmitted(true);
+        setStatusMessage("TRANSMISSION RÉUSSIE.");
+    };
+
+    if (isSubmitted) {
+        return (
+            <div className="main-container" style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'var(--color-secondary)' }}>
+                <div style={{ textAlign: 'center', padding: '2rem', maxWidth: '800px' }}>
+                    <h1 style={{ fontFamily: 'var(--font-title)', fontSize: '3rem', color: 'var(--color-primary)', marginBottom: '2rem' }}>
+                        FÉLICITATIONS !
+                    </h1>
+                    <p style={{ fontSize: '1.5rem', lineHeight: '1.6' }}>
+                        Votre message a été crypté, fragmenté et dispersé aux quatre coins du réseau. <br />
+                        Le Village Numérique a bien reçu votre signal. <br />
+                        <br />
+                        <em>Bienvenue dans la résistance.</em>
+                    </p>
+                    <button
+                        onClick={() => window.location.reload()}
+                        style={{
+                            marginTop: '3rem',
+                            padding: '1rem 2rem',
+                            background: 'transparent',
+                            border: '1px solid white',
+                            color: 'white',
+                            cursor: 'pointer',
+                            fontFamily: 'var(--font-title)'
+                        }}
+                    >
+                        RETOURNER AU COMBAT
+                    </button>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="main-container" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
@@ -348,6 +466,13 @@ const Contact = () => {
                                             onChange={handleInputChange}
                                             disabled={!isUnlocked}
                                         />
+                                    ) : field.component === 'address' ? (
+                                        <AddressInput
+                                            name={field.name}
+                                            value={formData[field.name]}
+                                            onChange={handleInputChange}
+                                            disabled={!isUnlocked}
+                                        />
                                     ) : (
                                         isTextArea ? (
                                             <textarea
@@ -377,10 +502,7 @@ const Contact = () => {
                             <button
                                 type="submit"
                                 disabled={unlockedElement !== 'submit'}
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    alert('Transmission réussie... peut-être.');
-                                }}
+                                onClick={handleSubmit}
                                 style={{
                                     padding: '1rem 3rem',
                                     fontFamily: 'var(--font-title)',
@@ -516,6 +638,13 @@ const Contact = () => {
                 }
 
                 @keyframes pulse { from { opacity: 0.7; } to { opacity: 1; } }
+                @keyframes shake {
+                    0% { transform: translateX(0); }
+                    25% { transform: translateX(-5px); }
+                    50% { transform: translateX(5px); }
+                    75% { transform: translateX(-5px); }
+                    100% { transform: translateX(0); }
+                }
             `}</style>
         </div>
     );
