@@ -129,7 +129,7 @@ function App() {
       <Navigation />
 
       <div className="content-left">
-        <section className="hero-section">
+        <section className="hero-section" id="hero">
           <h1
             ref={titleRef}
             onClick={() => setShowSnake(true)}
@@ -138,8 +138,6 @@ function App() {
           >
             AVENIRD
           </h1>
-        <section className="hero-section" id="hero">
-          <h1 ref={titleRef}>AVENIRD</h1>
           <p ref={textRef}>
             Le Village Numérique Résistant. <br />
             Comment les établissements scolaires peuvent tenir tête aux Big Tech ?
@@ -208,13 +206,6 @@ function App() {
             </div>
           </div>
         </section>
-      </div>
-
-      <div className="sidebar-right">
-        <div className="menu-btn">
-          <span></span>
-        </div>
-        <div className="logo">NIRD 2025</div>
       </div>
 
       {showSnake && <SnakeGame onClose={() => setShowSnake(false)} />}
