@@ -2,6 +2,8 @@
 
 Projet développé pour le défi **"Le Village Numérique Résistant"**.
 
+🌐 **[Voir le site en live](https://avenird.vercel.app/)** 🌐
+
 ## 👥 Équipe
 
 - **Paul THOMAS**
