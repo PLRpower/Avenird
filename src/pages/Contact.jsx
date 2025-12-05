@@ -151,7 +151,7 @@ const AddressInput = ({ name, value, onChange, disabled }) => {
         if (newAttempts === 1) setError("Non.");
         else if (newAttempts === 2) setError("Mauvaise adresse.");
         else if (newAttempts === 3) setError("Mauvais type d'adresse.");
-        else if (newAttempts >= 4) setError("Format requis : 192.168.x.x");
+        else if (newAttempts >= 4) setError("Oups ! Format requis : 192.168.x.x Désolé pour le désagrément !");
     };
 
     return (
