@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import gsap from 'gsap';
+import sopraSteriaLogo from '../assets/images/sopra-steria.png';
 import '../App.scss';
 
 // --- CUSTOM ANNOYING INPUTS ---
@@ -291,12 +292,12 @@ const Contact = () => {
         }
 
         gsap.to(containerRef.current, {
-            backgroundColor: Math.random() > 0.8 ? '#4a0000' : (Math.random() > 0.8 ? '#00004a' : 'var(--color-secondary)'),
-            duration: 0.1,
+            backgroundColor: Math.random() > 0.5 ? '#ff0000' : (Math.random() > 0.5 ? '#0000ff' : 'var(--color-secondary)'),
+            duration: 0.05,
             yoyo: true,
-            repeat: 1,
+            repeat: 5,
             onComplete: () => {
-                gsap.to(containerRef.current, { backgroundColor: 'var(--color-secondary)', duration: 0.5 });
+                gsap.to(containerRef.current, { backgroundColor: 'var(--color-secondary)', duration: 0.2 });
             }
         });
 
@@ -376,7 +377,7 @@ const Contact = () => {
     }
 
     return (
-        <div className="main-container" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+        <div className="main-container" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', backgroundColor: 'var(--color-secondary)' }}>
             <div
                 ref={containerRef}
                 className="content-section section-dark"
@@ -386,10 +387,22 @@ const Contact = () => {
                     flexDirection: 'column',
                     justifyContent: 'center',
                     paddingTop: '100px',
-                    transition: 'background-color 0.5s ease'
+                    transition: 'background-color 0.5s ease',
+                    marginTop: 0,
+                    clipPath: 'none'
                 }}
             >
                 <div style={{ maxWidth: '900px', width: '100%', margin: '0 auto', padding: '2rem' }}>
+                    <div className="challenge-info" style={{ textAlign: 'center', marginBottom: '3rem', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '2rem' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1rem', marginBottom: '1rem' }}>
+                            <p style={{ fontSize: '1.1rem', opacity: 1, margin: 0, color: 'var(--color-primary)' }}>Défi relevé pour</p>
+                            <img src={sopraSteriaLogo} alt="Sopra Steria" style={{ height: '60px', objectFit: 'contain', filter: 'brightness(0) saturate(100%) invert(14%) sepia(92%) saturate(4320%) hue-rotate(355deg) brightness(94%) contrast(96%)' }} />
+                        </div>
+                        <h2 style={{ fontFamily: 'var(--font-title)', fontSize: '1.5rem', color: 'var(--color-primary)', textTransform: 'uppercase', letterSpacing: '1px', marginTop: '0.5rem' }}>
+                            Défi : "L'ergonomie : simplifier pour mieux vivre"
+                        </h2>
+                    </div>
+
                     <h1 style={{
                         fontFamily: 'var(--font-title)',
                         fontSize: '3rem',
