@@ -9,6 +9,7 @@ import demarcheImg from '../assets/images/demarche.png';
 import pillarsImg from '../assets/images/pillars.png';
 import joinImg from '../assets/images/join.png';
 import linuxLogo from '../assets/images/linux.png';
+import pensesImg from '../assets/images/img_tu_penses.png';
 import '../App.scss';
 import './_home-additions.scss';
 
@@ -237,16 +238,8 @@ function Home() {
                                 leurs faiblesses, et faire des choix éclairés.
                             </p>
                         </div>
-                        <div className="image-col" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                            <div style={{
-                                fontSize: '4rem',
-                                background: 'linear-gradient(135deg, #00ff00, #00ffff)',
-                                WebkitBackgroundClip: 'text',
-                                WebkitTextFillColor: 'transparent',
-                                fontWeight: 'bold'
-                            }}>
-                                🤖
-                            </div>
+                        <div className="image-col">
+                            <img src={pensesImg} alt="Intelligence Artificielle" />
                         </div>
                     </div>
                 </section>
