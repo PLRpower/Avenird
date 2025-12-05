@@ -239,7 +239,7 @@ function Home() {
                             </p>
                         </div>
                         <div className="image-col">
-                            <img src={pensesImg} alt="Intelligence Artificielle" />
+                            <img src={pensesImg} alt="Intelligence Artificielle" className="no-shadow" />
                         </div>
                     </div>
                 </section>
