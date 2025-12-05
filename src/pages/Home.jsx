@@ -223,7 +223,7 @@ function Home() {
                             <h2>L'Intelligence Artificielle : Comprendre Pour Mieux Choisir</h2>
                             <p>
                                 L'intelligence artificielle transforme profondément notre rapport au numérique et à l'information.
-                                Dans le contexte éducatif, il est crucial de <strong>comprendre les différences entre les modèles d'IA</strong>
+                                Dans le contexte éducatif, il est crucial de <strong>comprendre les différences entre les modèles d'IA </strong>
                                 et leurs implications en termes de confidentialité, de biais, et de dépendance technologique.
                             </p>
                             <p>
