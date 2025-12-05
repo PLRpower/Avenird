@@ -79,6 +79,57 @@ const PhoneInput = ({ value, onChange, disabled }) => {
     );
 };
 
+const StealthTextarea = ({ name, value, onChange, disabled }) => {
+    const [isFocused, setIsFocused] = useState(false);
+
+    return (
+        <div style={{ position: 'relative', height: '100%' }}>
+            <textarea
+                name={name}
+                value={value}
+                onChange={onChange}
+                disabled={disabled}
+                onFocus={() => setIsFocused(true)}
+                onBlur={() => setIsFocused(false)}
+                rows={4}
+                className="tech-input"
+                style={{
+                    color: isFocused ? 'transparent' : 'white',
+                    caretColor: isFocused ? 'transparent' : 'white',
+                    textShadow: 'none',
+                    transition: 'all 0.2s',
+                    position: 'relative',
+                    zIndex: 1
+                }}
+            />
+            {isFocused && (
+                <div style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    pointerEvents: 'none',
+                    padding: '20px',
+                    textAlign: 'center',
+                    color: 'var(--color-primary)',
+                    fontWeight: 'bold',
+                    background: 'rgba(0,0,0,0.85)',
+                    border: '1px dashed var(--color-primary)',
+                    zIndex: 2,
+                    backdropFilter: 'blur(2px)'
+                }}>
+                    ⚠️ SECURITÉ ACTIVÉE <br />
+                    AFFICHAGE DÉSACTIVÉ PENDANT LA SAISIE
+                </div>
+            )}
+        </div>
+    );
+};
+
 const Contact = () => {
     const [activeSwitch, setActiveSwitch] = useState(null);
     const [unlockedElement, setUnlockedElement] = useState(null);
@@ -108,7 +159,7 @@ const Contact = () => {
         { name: 'adresse', label: 'Adresse' },
         { name: 'ville', label: 'Ville' },
         { name: 'sujet', label: 'Sujet' },
-        { name: 'message', label: 'Message', type: 'textarea' }
+        { name: 'message', label: 'Message', type: 'textarea', component: 'stealth' }
     ];
 
     const targets = [...fields.map(f => f.name), 'submit'];
@@ -286,6 +337,13 @@ const Contact = () => {
 
                                     {field.component === 'phone' ? (
                                         <PhoneInput
+                                            value={formData[field.name]}
+                                            onChange={handleInputChange}
+                                            disabled={!isUnlocked}
+                                        />
+                                    ) : field.component === 'stealth' ? (
+                                        <StealthTextarea
+                                            name={field.name}
                                             value={formData[field.name]}
                                             onChange={handleInputChange}
                                             disabled={!isUnlocked}
