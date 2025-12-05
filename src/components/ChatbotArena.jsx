@@ -149,8 +149,7 @@ Sois pédagogique et précis.`}
                         setCredibilityScore={setCredibilityScore}
                         setSources={setSources}
                         setVerdict={setVerdict}
-                        initialMessage="Bonjour. Je suis TruthBot. Soumettez-moi une information, un tweet ou un texte, et j'analyserai sa fiabilité. 🛡️"
-                        systemPrompt="Tu es TruthBot, un assistant expert en fact-checking, esprit critique et éthique numérique. Ton but est d'analyser le texte fourni par l'utilisateur pour détecter de la désinformation potentielle, des biais cognitifs, des sophismes ou des fausses nouvelles. Sois pédagogique, bienveillant et précis. Explique pourquoi une information semble douteuse ou fiable. Cite des sources si possible ou explique comment vérifier. SOIS CONCIS et direct, évite les longs pavés, va à l'essentiel."
+
                     />
                 )}
             </div>
@@ -158,8 +157,6 @@ Sois pédagogique et précis.`}
     );
 };
 const ChatBot = ({ botName, avatar, botType, initialMessage, systemPrompt, setCredibilityScore, setSources, setVerdict }) => {
-
-const ChatBot = ({ botName, botType, initialMessage, systemPrompt, avatar }) => {
     // Load from localStorage or use initial message
     const [messages, setMessages] = useState(() => {
         const saved = localStorage.getItem(`avenird_chat_${botType}`);
